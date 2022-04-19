@@ -14,7 +14,9 @@
 #include <fcntl.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "pipex.h"
+#include <sys/types.h>
+#include <sys/wait.h>
+#include "ft_printf.h"
 
 int	check_commands(char *s1, char *s2)
 {
@@ -42,7 +44,7 @@ int	check_args(char *s1, char *s2, int argc)
 	a = access(s1, R_OK);
 	if (argc != 5)
 	{
-		ft_printf("Error: Too few arguments\n");
+		write(2, "Error: Too few arguments\n", 25);
 		return (-1);
 	}
 	if (a == -1)
@@ -118,15 +120,36 @@ int	main(int argc, char **argv)
 	int	fd2;
 	int fd3;
 	int pipes[2];
+	int pipes2[2];
 	char	*_read;
 
 	if (check_args(argv[1], argv[4], argc))
 		exit(-1);
 	fd1 = open(argv[1], O_RDONLY);
-	fd2 = open(argv[1], O_RDONLY);
-	fd3 = open(argv[5], O_WRONLY);
-	_read = alloc_read(filesize(dup(fd1)), fd2);
-	if (!_read)
+	fd2 = open(argv[1], O_WRONLY);
+	if (pipe(pipes) == -1 || fd1 == -1 || fd2 == -1)
+	{
+		perror("Error");
 		exit(-1);
-		
+	}
+
+	
+	//fd1 = fork();
+	//wait(&fd2);
+
+	//if (WIFEXITED(fd2))
+	//	write(1, "CCCC", 4);
+//	if (fd1 == 0)
+//	{
+//		close(pipes[0]);
+//		write(pipes[1], , 4);
+//	}
+//	else
+//		write(1, "BBBB", 4);
+	//fd1 = open(argv[1], O_RDONLY);
+	//fd2 = open(argv[1], O_RDONLY);
+	//fd3 = open(argv[5], O_WRONLY);
+	//_read = alloc_read(filesize(dup(fd1)), fd2);
+	//if (!_read)
+	//	exit(-1);	
 }
