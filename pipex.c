@@ -42,27 +42,6 @@ int	check_args(char *s1, char *s2, int argc)
 	return (0);
 }
 
-char	*alloc_read(ssize_t size, int fd)
-{
-	char	*_read;
-
-	if (size == -1)
-		return (NULL);
-	_read = malloc((size + 1) * sizeof (*_read));
-	if (!_read)
-	{
-		perror("Can't allocate memory");
-		return (NULL);
-	}
-	if (read(fd, _read, size) == -1)
-	{
-		perror("Can't read from a file");
-		return (NULL);
-	}
-	_read[size] = '\0';
-	return (_read);
-}
-
 //void	exec1(fd, pipe1, pipe2)
 
 int	main(int argc, char **argv)
@@ -75,7 +54,6 @@ int	main(int argc, char **argv)
 	char	*script1;
 	char	*script2;
 	pid_t	pid;
-	char	buf[20];
 
 	args1 = ft_split(argv[2], ' ');
 	args2 = ft_split(argv[3], ' ');
@@ -91,7 +69,7 @@ int	main(int argc, char **argv)
 	pid = fork();
 	if (pid == 0)
 	{
-		fd = open(argv[1], O_RDONLY | O_CLOEXEC);
+		fd = open(argv[1], O_RDONLY | O_CLOEXEC | O_TRUNC);
 		fd = dup2(fd, STDIN_FILENO);
 		close(pipes[0]);
 		pipes[1] = dup2(pipes[1], STDOUT_FILENO); 
