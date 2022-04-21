@@ -18,25 +18,6 @@
 #include <sys/wait.h>
 #include "ft_printf.h"
 
-int	check_commands(char *s1, char *s2)
-{
-	int	a;
-
-	a = system(s1);
-	if (a == 0)
-	{
-		perror("Error first command");
-		return (-1);
-	}
-	a = system(s2);
-	if (a == 0)
-	{
-		perror("Error second command");
-		return (-1);
-	}
-	return (0);
-}
-
 int	check_args(char *s1, char *s2, int argc)
 {
 	int	a;
@@ -44,7 +25,7 @@ int	check_args(char *s1, char *s2, int argc)
 	a = access(s1, R_OK);
 	if (argc != 5)
 	{
-		write(2, "Error: Too few arguments\n", 25);
+		printf("Error: Too few arguments\n");
 		return (-1);
 	}
 	if (a == -1)
@@ -56,16 +37,6 @@ int	check_args(char *s1, char *s2, int argc)
 	if (a == -1)
 	{
 		perror("Cannot write to a file");
-		return (-1);
-	}
-	return (0);
-}
-
-int	call_system(char *s)
-{
-	if (system(s) == -1)
-	{
-		perror("Error");
 		return (-1);
 	}
 	return (0);
@@ -88,7 +59,7 @@ ssize_t	filesize(int fd)
 		a = read(fd, &b, 1);
 		if (a == -1)
 		{
-			perror("Error");
+			perror("Can't read from a file");
 			return (-1);
 		}
 		if (a == 0)
@@ -105,9 +76,14 @@ char	*alloc_read(ssize_t size, int fd)
 	if (size == -1)
 		return (NULL);
 	_read = malloc((size + 1) * sizeof (*_read));
-	if (!_read || read(fd, _read, size) == -1)
+	if (!_read)
 	{
-		perror("Error");
+		perror("Can't allocate memory");
+		return (NULL);
+	}
+	if (read(fd, _read, size) == -1)
+	{
+		perror("Can't read from a file");
 		return (NULL);
 	}
 	_read[size] = '\0';
@@ -118,7 +94,8 @@ int	main(int argc, char **argv)
 {
 	int	fd1;
 	int	fd2;
-	int fd3;
+	int	fd3;
+	pid_t	pid;
 	int pipes[2];
 	int pipes2[2];
 	char	*_read;
@@ -126,14 +103,21 @@ int	main(int argc, char **argv)
 	if (check_args(argv[1], argv[4], argc))
 		exit(-1);
 	fd1 = open(argv[1], O_RDONLY);
-	fd2 = open(argv[1], O_WRONLY);
+	fd2 = open(argv[1], O_RDONLY);
+	_read = alloc_read(filesize(fd1), fd2);
+	if (!_read)
+		exit(-1);
+	//printf("%s\n", _read);
 	if (pipe(pipes) == -1 || fd1 == -1 || fd2 == -1)
 	{
-		perror("Error");
+		perror("Pipe");
 		exit(-1);
 	}
-
-	
+//	pid = fork();	if (pid == 0)
+//	{
+//		close(pipes[0]);
+//		write(pipes[1], _read, )
+//	}
 	//fd1 = fork();
 	//wait(&fd2);
 
