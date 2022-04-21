@@ -24,68 +24,41 @@ static size_t	len(const char *s)
 	return (i);
 }
 
-static void	ft_strcpy(char *s1, char *s2, size_t i, int first)
+static void	ft_strcpy(char *s1, char *s2)
 {
-	int	j;
+	int	i;
 
-	j = 0;
-	while (s2[j])
+	i = 0;
+	while (s2[i])
 	{
-		s1[i] = s2[j];
-		j++;
+		s1[i] = s2[i];
 		i++;
 	}
-	if (first)
-		s1[i++] = ' ';
 	s1[i] = '\0';
 }
 
 char	*ft_strjoin(char *s1, char *s2)
 {
 	size_t	i;
-	char	*res;
-
-	i = 1;
-	res = (char *)malloc(sizeof (*res) * (len(s1) + len(s2) + 4));
-	if (!res)
-		return (NULL);
-	res[0] = '<';
-	while (s1[i - 1])
-	{
-		res[i] = s1[i - 1];
-		i++;
-	}
-	res[i] = ' ';
-	i++;
-	ft_strcpy(res, s2, i, 1);
-	return (res);
-}
-
-char	*ft_strjoin2(char *s1, char *s2)
-{
-	size_t	i;
 	size_t	j;
 	char	*res;
-	char	mid[3];
 
-	i = 1;
+	i = 0;
 	j = 0;
-	mid = " > ";
-	res = (char *)malloc(sizeof (*res) * (len(s1) + len(s2) + 6));
+	res = (char *)malloc(sizeof (*res) * (len(s1) + len(s2) + 1));
 	if (!res)
 		return (NULL);
-	res[0] = '|';
-	while (s1[i - 1])
+	while (s1[i])
 	{
-		res[i] = s1[i - 1];
+		res[i] = s1[i];
 		i++;
 	}
-	while (j < 3)
+	while (s2[j])
 	{
-		res[i] = mid[j];
+		res[i] = s2[j];
 		i++;
 		j++;
 	}
-	ft_strcpy(res, s2, i, 0);
+	res[i] = '\0';
 	return (res);
 }

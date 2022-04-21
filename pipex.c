@@ -42,33 +42,6 @@ int	check_args(char *s1, char *s2, int argc)
 	return (0);
 }
 
-ssize_t	filesize(int fd)
-{
-	ssize_t	a;
-	ssize_t	size;
-	char	b;
-
-	size = 0;
-	if (fd == -1)
-	{
-		perror("Error");
-		return (-1);
-	}
-	while (1)
-	{
-		a = read(fd, &b, 1);
-		if (a == -1)
-		{
-			perror("Can't read from a file");
-			return (-1);
-		}
-		if (a == 0)
-			break ;
-		size++;
-	}
-	return (size);
-}
-
 char	*alloc_read(ssize_t size, int fd)
 {
 	char	*_read;
@@ -90,50 +63,53 @@ char	*alloc_read(ssize_t size, int fd)
 	return (_read);
 }
 
+//void	exec1(fd, pipe1, pipe2)
+
 int	main(int argc, char **argv)
 {
-	int	fd1;
-	int	fd2;
-	int	fd3;
+	int	fd;
+	int	status;
+	int	 pipes[2];
+	char	**args1;
+	char	**args2;
+	char	*script1;
+	char	*script2;
 	pid_t	pid;
-	int pipes[2];
-	int pipes2[2];
-	char	*_read;
+	char	buf[20];
 
+	args1 = ft_split(argv[2], ' ');
+	args2 = ft_split(argv[3], ' ');
+	script1 = ft_strjoin("/bin/", args1[0]);
+	script2 = ft_strjoin("/bin/", args2[0]);
 	if (check_args(argv[1], argv[4], argc))
 		exit(-1);
-	fd1 = open(argv[1], O_RDONLY);
-	fd2 = open(argv[1], O_RDONLY);
-	_read = alloc_read(filesize(fd1), fd2);
-	if (!_read)
-		exit(-1);
-	//printf("%s\n", _read);
-	if (pipe(pipes) == -1 || fd1 == -1 || fd2 == -1)
+	if (pipe(pipes) == -1)
 	{
 		perror("Pipe");
 		exit(-1);
 	}
-//	pid = fork();	if (pid == 0)
-//	{
-//		close(pipes[0]);
-//		write(pipes[1], _read, )
-//	}
-	//fd1 = fork();
-	//wait(&fd2);
-
-	//if (WIFEXITED(fd2))
-	//	write(1, "CCCC", 4);
-//	if (fd1 == 0)
-//	{
-//		close(pipes[0]);
-//		write(pipes[1], , 4);
-//	}
-//	else
-//		write(1, "BBBB", 4);
-	//fd1 = open(argv[1], O_RDONLY);
-	//fd2 = open(argv[1], O_RDONLY);
-	//fd3 = open(argv[5], O_WRONLY);
-	//_read = alloc_read(filesize(dup(fd1)), fd2);
-	//if (!_read)
-	//	exit(-1);	
+	pid = fork();
+	if (pid == 0)
+	{
+		fd = open(argv[1], O_RDONLY | O_CLOEXEC);
+		fd = dup2(fd, STDIN_FILENO);
+		close(pipes[0]);
+		pipes[1] = dup2(pipes[1], STDOUT_FILENO); 
+		execve(script1, args1, NULL);
+		perror("Execve failed child 1");
+		exit(-1);
+	}
+	wait(&status);
+	if (!WIFEXITED(status))
+	{
+		perror("Error running child process");
+		exit(-1);
+	}
+	close(pipes[1]);
+	pipes[0] = dup2(pipes[0], STDIN_FILENO);
+	fd = open(argv[4], O_WRONLY | O_CLOEXEC | O_TRUNC);
+	fd = dup2(fd, STDOUT_FILENO);
+	execve(script2, args2, NULL);
+	perror("Execve failed");
+	exit(-1);
 }
