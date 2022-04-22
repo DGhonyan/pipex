@@ -19,6 +19,7 @@
 #include "pipex.h"
 /// TODO delete this the fuck out
 #include <string.h>
+
 int	check_args(char *s1, char *s2, int argc)
 {
 	int	a;
@@ -27,7 +28,6 @@ int	check_args(char *s1, char *s2, int argc)
 	if (argc != 5)
 	{
 		printf("Error: Too few arguments\n");
-
 		exit(-1);
 	}
 	if (a == -1)
@@ -43,7 +43,6 @@ int	check_args(char *s1, char *s2, int argc)
 	}
 	return (0);
 }
-
 
 void	child1(char *s, char **args, int pipe_write, char *f)
 {
@@ -144,7 +143,7 @@ void	which_output(int *pipe, char *command)
 {
 	char	**args;
 	char	*script;
-	int	i;
+	int		i;
 
 	i = 0;
 	close(pipe[0]);
@@ -174,13 +173,13 @@ int	**create_pipe_arr(int size)
 		pipes[i] = (int *)malloc(2 * sizeof (**pipes));
 		if (!pipes[i])
 		{
-			free_ptr_arr((void**)pipes, i, 1);
+			free_ptr_arr((void **)pipes, i, 1);
 			perror("Failed to allocate pipe");
 			return (NULL);
 		}
 		if (!pipe(pipes[i]))
 		{
-			free_ptr_arr((void**)pipes, i, 1);
+			free_ptr_arr((void **)pipes, i, 1);
 			perror("Failed to create pipe");
 			return (NULL);
 		}
@@ -195,34 +194,19 @@ int	main(int argc, char **argv)
 	int		fd;
 	int		fd2;
 	int		status;
-	int	 	*pipes;
+	int		*pipes;
 	int		**all_pipes;
-	int	 	*pipes_for_path;
+	int		*pipes_for_path;
 	char	*path;
 	char	*full_command;
 	char	**command_arr;
 	char	**args;
-///	char	**args2;
-//	char	*script1;
-//	char	*script2;
 	pid_t	pid;
 
-	/// TODO add which command usage lol why not
 
 	check_args(argv[1], argv[argc - 1], argc);
 
 	pipes = create_pipes();
-//	pipes_for_path = create_pipes();
-//	int i = 2;
-//	while (i < argc - 1)
-//	{
-//		pid = fork();
-//		if (pid < 0)
-//			perror("Failed at fork()");
-//		else if (!pid)
-//			;//which_output();
-//		i++;
-//	}
 	pid = fork();
 	if (pid < 0)
 	{
@@ -268,16 +252,14 @@ int	main(int argc, char **argv)
 			perror("Memory is fucked up even more");
 			exit(EXIT_FAILURE);
 		}
-	//`:w
-	//:w
-	//printf("%s %s %s", path, args[0], args[1]);
 		execve(path, args, NULL);
 		free(path);
 		free(pipes);
 		perror("How the fuck this keeps happening");
 		exit(EXIT_FAILURE);
 	}
-	else wait(&status);
+	else
+		wait(&status);
 ///	//close(pipes_for_path[1]);
 ///	script1 = ft_strjoin("/bin/bash -c ", argv[2]);
 ///	script2 = ft_strjoin("/bin/bash -c ", argv[3]);
