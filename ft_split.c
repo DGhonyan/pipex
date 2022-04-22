@@ -11,8 +11,7 @@
 /* ************************************************************************** */
 
 #include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
+#include "pipex.h"
 
 static size_t	count(char const *s, char c)
 {
@@ -99,3 +98,55 @@ char	**ft_split(char const *s, char c)
 	return (res - count(s, c));
 }
 
+char	*ft_strdup_normal(char *s)
+{
+	char	*res;
+	size_t	i;
+
+	i = 0;
+	res = (char *)malloc((ft_strlen(s, 0, '\0') + 1) * sizeof (*res));
+	if (!res)
+		return (NULL);
+	while (s[i])
+	{
+		res[i] = s[i];
+		i++;
+	}
+	res[i] = '\0';
+	return (res);
+}
+
+char	**ft_kinda_split(char **s, char *new)
+{
+	char	**res;
+	size_t	i;
+
+	i = 1;
+	res = (char **)malloc((ptr_arr_len(s) + 1) * sizeof (*res));
+	if (!res)
+	{
+		free_ptr_arr((void **)s, ptr_arr_len(s), 0);
+		return (NULL);
+
+	}
+	res[0] = ft_strdup_normal(new);
+	if (!res[0])
+	{
+		free_ptr_arr((void **)s, ptr_arr_len(s), 0);
+		return (NULL);
+	}
+	while (s[i])
+	{
+		res[i] = ft_strdup_normal(s[i]);
+		if (!res[i])
+		{
+			free_ptr_arr((void **)res, i, 0);
+			free_ptr_arr((void **)s, ptr_arr_len(s), 0);
+			return (NULL);
+		}
+		i++;
+	}
+	free_ptr_arr((void **)s, ptr_arr_len(s), 0);
+	res[i] = NULL;
+	return (res);
+}

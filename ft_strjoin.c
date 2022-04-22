@@ -48,17 +48,38 @@ char	*ft_strjoin(char *s1, char *s2)
 	res = (char *)malloc(sizeof (*res) * (len(s1) + len(s2) + 1));
 	if (!res)
 		return (NULL);
-	while (s1[i])
+	while (i < len(s1))
 	{
 		res[i] = s1[i];
 		i++;
 	}
-	while (s2[j])
+	while (j < len(s2))
 	{
 		res[i] = s2[j];
 		i++;
 		j++;
 	}
 	res[i] = '\0';
+	return (res);
+}
+
+
+char	*ft_strjoin_for_read(char *s, char c)
+{
+	size_t	i;
+	char	*res;
+
+	i = 0;
+	res = (char *)malloc(sizeof (*res) * (len(s) + 2));
+	if (!res)
+		return (NULL);
+	while (i < len(s))
+	{
+		res[i] = s[i];
+		i++;
+	}
+	free(s);
+	res[i] = c;
+	res[i + 1] = '\0';
 	return (res);
 }

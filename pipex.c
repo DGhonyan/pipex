@@ -16,8 +16,9 @@
 #include <stdlib.h>
 #include <sys/types.h>
 #include <sys/wait.h>
-#include "ft_printf.h"
-
+#include "pipex.h"
+/// TODO delete this the fuck out
+#include <string.h>
 int	check_args(char *s1, char *s2, int argc)
 {
 	int	a;
@@ -87,47 +88,211 @@ int	*create_pipes(void)
 	return (pipes);
 }
 
+char	*read_from_pipe(int pipe)
+{
+	char	*s;
+	char	c;
+	int		a;
+
+	s = NULL;
+	while (1)
+	{
+		a = read(pipe, &c, 1);
+		if (a == -1)
+		{
+			free(s);
+			perror("Cant read from a pipe");
+			exit(EXIT_FAILURE);
+		}
+		if (a == 0)
+			break ;
+		s = ft_strjoin_for_read(s, c);
+		if (!s)
+		{	
+			perror("Can't allocate memory");
+			exit(EXIT_FAILURE);
+		}
+	}
+	return (s);
+}
+
+ssize_t	filesize(int fd)
+{
+	ssize_t	size;
+	ssize_t	status;
+	char	c;
+
+	size = 0;
+	if (fd < 0)
+		return (0);
+	while (1)
+	{
+		status = read(fd, &c, 1);
+		if (status == -1)
+		{
+			perror("Error reading from fd");
+			return (0);
+		}
+		if (status == 0)
+			return (size);
+		size++;
+	}
+	return (0);
+}
+
+void	which_output(int *pipe, char *command)
+{
+	char	**args;
+	char	*script;
+	int	i;
+
+	i = 0;
+	close(pipe[0]);
+	pipe[1] = dup2(pipe[1], STDOUT_FILENO);
+	args = ft_split(command, ' ');
+	script = ft_strjoin("/usr/bin/which ", args[0]);
+	free_ptr_arr((void **)args, ptr_arr_len(args), 0);
+	args = ft_split(script, ' ');
+	execve("/usr/bin/which", args, NULL);
+	perror("Execve failed at which_output()");
+	free_ptr_arr((void **)args, ptr_arr_len(args), 0);
+	free(script);
+	exit (EXIT_FAILURE);
+}
+
+int	**create_pipe_arr(int size)
+{
+	int	**pipes;
+	int	i;
+
+	pipes = (int **)malloc(size * sizeof (*pipes));
+	if (!pipes)
+		return (NULL);
+	i = 0;
+	while (i < size)
+	{
+		pipes[i] = (int *)malloc(2 * sizeof (**pipes));
+		if (!pipes[i])
+		{
+			free_ptr_arr((void**)pipes, i, 1);
+			perror("Failed to allocate pipe");
+			return (NULL);
+		}
+		if (!pipe(pipes[i]))
+		{
+			free_ptr_arr((void**)pipes, i, 1);
+			perror("Failed to create pipe");
+			return (NULL);
+		}
+		i++;
+	}
+	pipes[i] = NULL;
+	return (pipes);
+}
+
 int	main(int argc, char **argv)
 {
+	int		fd;
+	int		fd2;
 	int		status;
 	int	 	*pipes;
+	int		**all_pipes;
 	int	 	*pipes_for_path;
-	char	**args1;
-	char	**args2;
-	char	*script1;
-	char	*script2;
+	char	*path;
+	char	*full_command;
+	char	**command_arr;
+	char	**args;
+///	char	**args2;
+//	char	*script1;
+//	char	*script2;
 	pid_t	pid;
 
 	/// TODO add which command usage lol why not
 
 	check_args(argv[1], argv[argc - 1], argc);
-	printf("%s %s\n", script1, script2);
+
 	pipes = create_pipes();
-	pipes_for_path = create_pipes();
+//	pipes_for_path = create_pipes();
+//	int i = 2;
+//	while (i < argc - 1)
+//	{
+//		pid = fork();
+//		if (pid < 0)
+//			perror("Failed at fork()");
+//		else if (!pid)
+//			;//which_output();
+//		i++;
+//	}
 	pid = fork();
-	if (!pid)
+	if (pid < 0)
 	{
-		close(pipes_for_path[0]);
-		args1 = ft_split(argv[2]);
-		pipes_for_path[1] = dup2(pipes_for_path[1], STDOUT_FILENO);
-		execve("/usr/bin/which", args1, NULL);
+		perror("Failed to start child process");
+		exit (EXIT_FAILURE);
 	}
-	wait(&status);
-	close(pipes_for_path[1]);
-	script1 = ft_strjoin("/bin/bash -c ", argv[2]);
-	script2 = ft_strjoin("/bin/bash -c ", argv[3]);
-	args1 = ft_split(script1, ' ');
-	args2 = ft_split(script2, ' ');
-	pid = fork();
-	if (!pid)
+	else if (!pid)
 	{
-		close(pipes[0]);
-		child1(args1[0], args1, pipes[1], argv[1]);
-		return (0);
+		which_output(pipes, argv[2]);
 	}
 	wait(&status);
 	close(pipes[1]);
-	child2(args2[0], args2, pipes[0], argv[argc -1]);
+	path = read_from_pipe(pipes[0]);
+	/// TODO change strlen;
+	if (path[strlen(path) - 1] == '\n')
+		path[strlen(path) - 1] = '\0';
+	pid = fork();
+	if (pid < 0)
+	{
+		free(pipes);
+		free(path);
+		perror("Can't fork process");
+		exit(EXIT_FAILURE);
+	}
+	if (!pid)
+	{
+		fd = open(argv[1], O_RDONLY | O_CLOEXEC);
+		//fd2 = open(argv[1], O_RDONLY | O_CLOEXEC);
+		fd = dup2(fd, STDIN_FILENO);
+		args = ft_split(argv[2], ' ');
+		if (!args)
+		{
+			free(path);
+			free(pipes);
+			perror("Memory is fucked up");
+			exit(EXIT_FAILURE);
+		}
+		args = ft_kinda_split(args, path);
+		if (!args)
+		{
+			free(path);
+			free(pipes);
+			perror("Memory is fucked up even more");
+			exit(EXIT_FAILURE);
+		}
+	//`:w
+	//:w
+	//printf("%s %s %s", path, args[0], args[1]);
+		execve(path, args, NULL);
+		free(path);
+		free(pipes);
+		perror("How the fuck this keeps happening");
+		exit(EXIT_FAILURE);
+	}
+	else wait(&status);
+///	//close(pipes_for_path[1]);
+///	script1 = ft_strjoin("/bin/bash -c ", argv[2]);
+///	script2 = ft_strjoin("/bin/bash -c ", argv[3]);
+///	args1 = ft_split(script1, ' ');
+///	args2 = ft_split(script2, ' ');
+///	pid = fork();
+///	if (!pid)
+///	{
+///		close(pipes[0]);
+///		child1(args1[0], args1, pipes[1], argv[1]);
+///		return (0);
+///	}
+///	wait(&status);
+///	close(pipes[1]);
+///	child2(args2[0], args2, pipes[0], argv[argc -1]);
 }
 
 /*
