@@ -37,7 +37,7 @@ static size_t	count(char const *s, char c)
 	return (count);
 }
 
-static size_t	ft_strlen(char const *s, char c, size_t i)
+static size_t	ft_strlen_split(char const *s, char c, size_t i)
 {
 	size_t	len;
 
@@ -85,7 +85,7 @@ char	**ft_split(char const *s, char c)
 	{
 		if (s[i] != c)
 		{
-			*res = ft_strdup(s, c, ft_strlen(s, c, i) + 1, &i);
+			*res = ft_strdup(s, c, ft_strlen_split(s, c, i) + 1, &i);
 			if (!(*res))
 				return (NULL);
 			res++;
@@ -104,7 +104,7 @@ char	*ft_strdup_normal(char *s)
 	size_t	i;
 
 	i = 0;
-	res = (char *)malloc((ft_strlen(s, 0, '\0') + 1) * sizeof (*res));
+	res = (char *)malloc((ft_strlen_split(s, 0, '\0') + 1) * sizeof (*res));
 	if (!res)
 		return (NULL);
 	while (s[i])
@@ -116,37 +116,37 @@ char	*ft_strdup_normal(char *s)
 	return (res);
 }
 
-char	**ft_kinda_split(char **s, char *new)
-{
-	char	**res;
-	size_t	i;
+// char	**ft_kinda_split(char **s, char *new)
+// {
+// 	char	**res;
+// 	size_t	i;
 
-	i = 1;
-	res = (char **)malloc((ptr_arr_len(s) + 1) * sizeof (*res));
-	if (!res)
-	{
-		free_ptr_arr((void **)s, ptr_arr_len(s), 0);
-		return (NULL);
+// 	i = 1;
+// 	res = (char **)malloc((ptr_arr_len(s) + 1) * sizeof (*res));
+// 	if (!res)
+// 	{
+// 		free_ptr_arr((void **)s, ptr_arr_len(s), 0);
+// 		return (NULL);
 
-	}
-	res[0] = ft_strdup_normal(new);
-	if (!res[0])
-	{
-		free_ptr_arr((void **)s, ptr_arr_len(s), 0);
-		return (NULL);
-	}
-	while (s[i])
-	{
-		res[i] = ft_strdup_normal(s[i]);
-		if (!res[i])
-		{
-			free_ptr_arr((void **)res, i, 0);
-			free_ptr_arr((void **)s, ptr_arr_len(s), 0);
-			return (NULL);
-		}
-		i++;
-	}
-	free_ptr_arr((void **)s, ptr_arr_len(s), 0);
-	res[i] = NULL;
-	return (res);
-}
+// 	}
+// 	res[0] = ft_strdup_normal(new);
+// 	if (!res[0])
+// 	{
+// 		free_ptr_arr((void **)s, ptr_arr_len(s), 0);
+// 		return (NULL);
+// 	}
+// 	while (s[i])
+// 	{
+// 		res[i] = ft_strdup_normal(s[i]);
+// 		if (!res[i])
+// 		{
+// 			free_ptr_arr((void **)res, i, 0);
+// 			free_ptr_arr((void **)s, ptr_arr_len(s), 0);
+// 			return (NULL);
+// 		}
+// 		i++;
+// 	}
+// 	free_ptr_arr((void **)s, ptr_arr_len(s), 0);
+// 	res[i] = NULL;
+// 	return (res);
+// }

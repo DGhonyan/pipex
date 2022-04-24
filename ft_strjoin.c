@@ -63,7 +63,6 @@ char	*ft_strjoin(char *s1, char *s2)
 	return (res);
 }
 
-
 char	*ft_strjoin_for_read(char *s, char c)
 {
 	size_t	i;

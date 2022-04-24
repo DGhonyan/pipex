@@ -1,20 +1,36 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   pipex.h                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: dghonyan <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/04/24 16:51:20 by dghonyan          #+#    #+#             */
+/*   Updated: 2022/04/24 16:51:22 by dghonyan         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef PIPEX_H
 
 # define PIPEX_H
 
-void	to_hex_lower(unsigned int n, int is_upper, int *count);
-void	ft_putnbr(int n, int *count);
-void	ft_putstr(char const *s, int *count);
-void	to_hex_upper(unsigned int n, int *count);
-void	ft_putnbr_u(unsigned int n, int *count);
-void	print_ptr(void *p, int *count);
-void	ft_putchar(char c, int *count);
+# include <stdlib.h>
+
 int		ft_printf(const char *s, ...);
 int		ptr_arr_len(char **arr);
-void	free_ptr_arr(void **arr, int size, int type);
+int		check_args(char *s1, char *s2, int argc);
+int		*create_pipes(int *pipes, int condition);
+char	*new_path(char *path);
 char	*ft_strjoin(char *s1, char *s2);
 char	*ft_strjoin_for_read(char *s1, char c);
 char	**ft_split(char const *s, char c);
 char	**ft_kinda_split(char **s, char *new);
+void	whereis(int *pipes, char *command);
+void	perror_exit(int condition, char *errmsg);
+void	free_ptr_arr(void **arr, int size, int type);
+void	free_error(int *pipes, char *path, int condition, char *errmsg);
+void	free_not_error(int *pipes, char *path);
+void	free_error_args(int *pipes, char *path, char **args, char *errmsg);
+size_t	ft_strlen(char *s);
 
 #endif
