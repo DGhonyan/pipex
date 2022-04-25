@@ -29,19 +29,30 @@ void	free_error(int *pipes, char *path, int condition, char *errmsg)
 	}
 }
 
+void	free_pipes_error(int *pipes1, int *pipes2, int condition, char *errmsg)
+{
+	if (condition)
+	{
+		free(pipes1);
+		free(pipes2);
+		perror(errmsg);
+		exit(EXIT_FAILURE);
+	}
+}
+
 void	free_not_error(int *pipes, char *path)
 {
 	free(pipes);
 	free(path);
 }
 
-void	free_error_args(int *pipes, char *path, char **args, char *errmsg)
+int	free_error_args(int *pipes, char *path, char **args, char *errmsg)
 {
 	free(pipes);
 	free(path);
 	free_ptr_arr((void **)args, ptr_arr_len(args), 0);
 	perror(errmsg);
-	exit(EXIT_FAILURE);
+	return (-1);
 }
 
 void	free_ptr_arr(void **ptr, int size, int type)
