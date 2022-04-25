@@ -1,5 +1,5 @@
 NAME = pipex
-CC = cc # TODO add flags and change to cc
+CC = cc # TODO add flags
 SRCS = $(wildcard *.c)
 OBJS = $(SRCS:.c=.o)
 
