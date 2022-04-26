@@ -1,4 +1,3 @@
-./, ../, .DS_Store, .git/, Makefile, a.out, a.sh, barev.txt, burev.txt, 
-close_pipes.c, close_pipes.o, free_things.c, free_things.o, ft_split.c, 
-ft_split.o, ft_strjoin.c, ft_strjoin.o, perror_exit.c, perror_exit.o, pipex, 
-pipex.c, pipex.h, pipex.o, run_whereis.c, run_whereis.o, utils.c, utils.o
+Makefile, a.out, barev.txt, burev.txt, close_pipes.c, free_things.c, ft_split.c,
+ft_strjoin.c, perror_exit.c, pipex, pipex.h, pipex_test.c, run_whereis.c,
+utils.c

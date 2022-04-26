@@ -76,6 +76,9 @@ int	child1(char *path, char **args, int *pipes, char *file)
 		return (free_error_args(pipes, path, args, "dup2 failed at child1"));
 	if (dup2(fd, STDIN_FILENO) < 0)
 		return (free_error_args(pipes, path, args, "dup2 failed at child1"));
+	if (close(pipes[1]) < 0)
+		return (free_error_args(pipes, path, args,
+				"close failed at child1 again"));
 	execve(path, args, NULL);
 	return (free_error_args(pipes, path, args, "Execve failed at child1"));
 }
@@ -94,6 +97,9 @@ int	child2(char *path, char **args, int *pipes, char *file)
 		return (free_error_args(pipes, path, args, "dup2 failed at child2"));
 	if (dup2(fd, STDOUT_FILENO) < 0)
 		return (free_error_args(pipes, path, args, "dup2 failed at child2"));
+	if (close(pipes[0]) < 0)
+		return (free_error_args(pipes, path, args,
+				"close failed at child2 again"));
 	execve(path, args, NULL);
 	return (free_error_args(pipes, path, args, "Execve failed at child2"));
 }
@@ -103,10 +109,7 @@ int	main(int argc, char **argv)
 	int		status;
 	int		*pipes;
 	int		*pipes_for_path;
-	char	*path;
 	pid_t	*pids;
-	pid_t	pid1;
-	pid_t	pid2;
 	pid_t	pid;
 
 	check_args(argv[1], argv[argc - 1], argc);
@@ -114,9 +117,9 @@ int	main(int argc, char **argv)
 	pids = (pid_t *)malloc(sizeof (*pids) * argc - 4);
 
 	pipes = create_pipes(pipes, 0);
-	free_error(pipes, NULL, pid < 0, "Can't fork process");	
-	pid1 = fork();
-	if (pid1 == 0)
+	pids[0] = fork();
+	free_error(pipes, NULL, pids[0] < 0, "Can't fork process");
+	if (pids[0] == 0)
 	{
 		pipes_for_path = create_pipes(pipes_for_path, 0);
 		pid = fork();
@@ -125,10 +128,10 @@ int	main(int argc, char **argv)
 			whereis(pipes_for_path, argv[2]);
 		else
 		{
-			close(pipes_for_path[1]);
 			waitpid(pid, &status, 0);
-			printf("%s\n", path = read_from_pipe_path(pipes_for_path[0]));
-			if (child1(path, ft_split(argv[2], ' '), pipes, argv[1]) < 0)
+			close(pipes_for_path[1]);
+			if (child1(read_from_pipe_path(pipes_for_path[0]),
+					ft_split(argv[2], ' '), pipes, argv[1]) < 0)
 			{
 				close(pipes_for_path[0]);
 				free(pipes_for_path);
@@ -136,11 +139,26 @@ int	main(int argc, char **argv)
 			}
 		}
 	}
-	else if (pid1 > 0)
+	else if (pids[0] > 0)
 	{
-		waitpid(pid1, &status, 0);
-		close(pipes[1]);
-		char *output = read_from_pipe(pipes[0]);
-		printf("%s", output);
-	}	
+		waitpid(pids[0], &status, 0);
+		pids[1] = fork();
+		if (pids[1] == 0)
+		{
+			pipes_for_path = create_pipes(pipes_for_path, 0);
+			pid = fork();
+			if (pid == 0)
+				whereis(pipes_for_path, argv[3]);
+			waitpid(pid, &status, 0);
+			close(pipes_for_path[1]);
+			if (child2(read_from_pipe_path(pipes_for_path[0]),
+					ft_split(argv[3], ' '), pipes, argv[argc - 1]) < 0)
+				;
+		}
+		else
+		{
+			waitpid(pids[1], &status, 0);
+			printf("back to parent");
+		}
+	}
 }
