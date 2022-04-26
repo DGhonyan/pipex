@@ -18,7 +18,7 @@
 #include <sys/wait.h>
 #include "pipex.h"
 
-void	whereis(int *pipes, char *command)
+void	whereis(int *pipes, char *command, char **envp)
 {
 	char	**args;
 	char	*script;
@@ -30,7 +30,7 @@ void	whereis(int *pipes, char *command)
 	script = ft_strjoin("which ", command);
 	args = ft_split(script, ' ');
 	free(script);
-	execve("/usr/bin/which", args, NULL);
+	execve("/usr/bin/which", args, envp);
 	perror("Execve failed at which_output()");
 	free_ptr_arr((void **)args, ptr_arr_len(args), 0);
 	exit (EXIT_FAILURE);

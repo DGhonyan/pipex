@@ -104,7 +104,7 @@ int	child2(char *path, char **args, int *pipes, char *file)
 	return (free_error_args(pipes, path, args, "Execve failed at child2"));
 }
 
-int	main(int argc, char **argv)
+int	main(int argc, char **argv, char **envp)
 {
 	int		status;
 	int		*pipes;
@@ -125,7 +125,7 @@ int	main(int argc, char **argv)
 		pid = fork();
 		free_pipes_error(pipes, pipes_for_path, pid < 0, "fork failed at main");
 		if (pid == 0)
-			whereis(pipes_for_path, argv[2]);
+			whereis(pipes_for_path, argv[2], envp);
 		else
 		{
 			waitpid(pid, &status, 0);
@@ -148,12 +148,16 @@ int	main(int argc, char **argv)
 			pipes_for_path = create_pipes(pipes_for_path, 0);
 			pid = fork();
 			if (pid == 0)
-				whereis(pipes_for_path, argv[3]);
+				whereis(pipes_for_path, argv[3], envp);
 			waitpid(pid, &status, 0);
 			close(pipes_for_path[1]);
 			if (child2(read_from_pipe_path(pipes_for_path[0]),
 					ft_split(argv[3], ' '), pipes, argv[argc - 1]) < 0)
-				;
+			{
+				close(pipes_for_path[0]);
+				free(pipes_for_path);
+				exit(EXIT_FAILURE);
+			}
 		}
 		else
 		{

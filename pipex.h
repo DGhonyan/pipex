@@ -26,7 +26,7 @@ char	*ft_strjoin(char *s1, char *s2);
 char	*ft_strjoin_for_read(char *s1, char c);
 char	**ft_split(char const *s, char c);
 char	**ft_kinda_split(char **s, char *new);
-void	whereis(int *pipes, char *command);
+void	whereis(int *pipes, char *command, char **envp);
 void	perror_exit(int condition, char *errmsg);
 void	free_ptr_arr(void **arr, int size, int type);
 void	free_error(int *pipes, char *path, int condition, char *errmsg);

@@ -1,3 +1,25 @@
-Makefile, a.out, barev.txt, burev.txt, close_pipes.c, free_things.c, ft_split.c,
-ft_strjoin.c, perror_exit.c, pipex, pipex.h, pipex_test.c, run_whereis.c,
-utils.c
+total 224
+-rw-r--r--  1 dghonyan  2021_yerevan    264 Apr 25 20:13 Makefile
+-rwxr-xr-x  1 dghonyan  2021_yerevan   8780 Apr 26 19:41 a.out
+-rw-r--r--  1 dghonyan  2021_yerevan     91 Apr 24 16:59 barev.txt
+-rw-r--r--  1 dghonyan  2021_yerevan      0 Apr 26 21:05 burev.txt
+-rw-r--r--  1 dghonyan  2021_yerevan      0 Apr 24 20:28 close_pipes.c
+-rw-r--r--  1 dghonyan  2021_yerevan    208 Apr 26 21:05 close_pipes.o
+-rw-r--r--  1 dghonyan  2021_yerevan   1895 Apr 25 20:13 free_things.c
+-rw-r--r--  1 dghonyan  2021_yerevan   1800 Apr 26 21:05 free_things.o
+-rw-r--r--  1 dghonyan  2021_yerevan   3004 Apr 24 16:52 ft_split.c
+-rw-r--r--  1 dghonyan  2021_yerevan   2408 Apr 26 21:05 ft_split.o
+-rw-r--r--  1 dghonyan  2021_yerevan   1747 Apr 24 16:53 ft_strjoin.c
+-rw-r--r--  1 dghonyan  2021_yerevan   1552 Apr 26 21:05 ft_strjoin.o
+-rw-r--r--  1 dghonyan  2021_yerevan   1128 Apr 24 16:51 perror_exit.c
+-rw-r--r--  1 dghonyan  2021_yerevan    720 Apr 26 21:05 perror_exit.o
+-rwxr-xr-x  1 dghonyan  2021_yerevan  14152 Apr 26 21:05 pipex
+-rw-r--r--  1 dghonyan  2021_yerevan   1757 Apr 26 19:24 pipex.h
+-rw-r--r--  1 dghonyan  2021_yerevan   4747 Apr 26 19:23 pipex_test.c
+-rw-r--r--  1 dghonyan  2021_yerevan   4596 Apr 26 21:05 pipex_test.o
+-rw-r--r--  1 dghonyan  2021_yerevan   1519 Apr 26 19:41 run_whereis.c
+-rw-r--r--  1 dghonyan  2021_yerevan   1392 Apr 26 21:05 run_whereis.o
+-rw-r--r--  1 dghonyan  2021_yerevan      0 Apr 26 21:05 test.c
+-rw-r--r--  1 dghonyan  2021_yerevan    208 Apr 26 21:05 test.o
+-rw-r--r--  1 dghonyan  2021_yerevan   1759 Apr 24 20:25 utils.c
+-rw-r--r--  1 dghonyan  2021_yerevan   1816 Apr 26 21:05 utils.o
