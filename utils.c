@@ -42,7 +42,12 @@ int	check_args(char *s1, char *s2, int argc)
 {
 	int	a;
 
-	perror_exit(argc != 5, "Error: Wrong arguments\n");
+	if (argc < 5)
+	{
+		/// TODO change printf
+		printf("Error: Too few arguments\n");
+		exit(EXIT_FAILURE);
+	}
 	a = access(s1, R_OK);
 	perror_exit(a == -1, "Cannot read from a file");
 	a = access(s2, W_OK);

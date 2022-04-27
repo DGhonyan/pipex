@@ -109,50 +109,62 @@ int	main(int argc, char **argv, char **envp)
 	int		status;
 	int		*pipes;
 	int		*pipes_for_path;
+	int		j;
+	char	*path;
 	pid_t	*pids;
 	pid_t	pid;
 
+	j = 0;
 	check_args(argv[1], argv[argc - 1], argc);
 	
-	pids = (pid_t *)malloc(sizeof (*pids) * argc - 4);
+	pids = (pid_t *)malloc(sizeof (*pids) * (argc - 3));
 
 	pipes = create_pipes(pipes, 0);
 	pids[0] = fork();
 	free_error(pipes, NULL, pids[0] < 0, "Can't fork process");
 	if (pids[0] == 0)
-	{
-		pipes_for_path = create_pipes(pipes_for_path, 0);
-		pid = fork();
-		free_pipes_error(pipes, pipes_for_path, pid < 0, "fork failed at main");
-		if (pid == 0)
-			whereis(pipes_for_path, argv[2], envp);
-		else
-		{
-			waitpid(pid, &status, 0);
-			close(pipes_for_path[1]);
-			if (child1(read_from_pipe_path(pipes_for_path[0]),
-					ft_split(argv[2], ' '), pipes, argv[1]) < 0)
-			{
-				close(pipes_for_path[0]);
-				free(pipes_for_path);
-				exit(EXIT_FAILURE);
-			}
-		}
-	}
+		child_fork_first(pipes, envp, argv);
 	else if (pids[0] > 0)
 	{
 		waitpid(pids[0], &status, 0);
-		pids[1] = fork();
-		if (pids[1] == 0)
+		printf("first process exited with status %d", WEXITSTATUS(status));
+		printf("\n%d\n", argc - 5);
+		for (j = 0; j < argc - 5; j++)
+		{
+
+			pids[j + 1] = fork();
+			if (pids[j + 1] == 0)
+			{
+				pipes_for_path = create_pipes(pipes_for_path, 0);
+				pid = fork();
+				if (pid == 0)
+					whereis(pipes_for_path, argv[j + 3], envp);
+				waitpid(pid, &status, 0);
+				close(pipes_for_path[1]);
+				if (dup2(pipes[0], STDIN_FILENO) < 0)
+					;//ERROR
+				if (dup2(pipes[1], STDOUT_FILENO) < 0)
+					;//ERROR
+				printf("%s\n", path = read_from_pipe_path(pipes_for_path[0]));
+				execve(path,
+						ft_split(argv[j + 3], ' '), envp);
+				//ERROR
+				exit(EXIT_FAILURE);
+			}
+			else
+				waitpid(pids[j + 1], &status, 0);
+		}
+		pids[argc - 2] = fork();
+		if (pids[argc - 2] == 0)
 		{
 			pipes_for_path = create_pipes(pipes_for_path, 0);
 			pid = fork();
 			if (pid == 0)
-				whereis(pipes_for_path, argv[3], envp);
+				whereis(pipes_for_path, argv[argc - 2], envp);
 			waitpid(pid, &status, 0);
 			close(pipes_for_path[1]);
 			if (child2(read_from_pipe_path(pipes_for_path[0]),
-					ft_split(argv[3], ' '), pipes, argv[argc - 1]) < 0)
+					ft_split(argv[argc - 2], ' '), pipes, argv[argc - 1]) < 0)
 			{
 				close(pipes_for_path[0]);
 				free(pipes_for_path);
@@ -161,8 +173,9 @@ int	main(int argc, char **argv, char **envp)
 		}
 		else
 		{
+			close(pipes[0]);
 			waitpid(pids[1], &status, 0);
-			printf("back to parent");
+			printf("back to parent\n");
 		}
 	}
 }
