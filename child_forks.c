@@ -31,7 +31,7 @@ void	child_fork_first(int *pipes, char **envp, char **argv)
 	}
 }
 
-void	child_fork_second(int *pipes, char **envp, char **argv)
+void	child_fork_last(int *pipes, char **envp, char **argv)
 {
 	int	*pipes_path;
 	int	status;
@@ -39,7 +39,7 @@ void	child_fork_second(int *pipes, char **envp, char **argv)
 
 	pipes_path = create_pipes(pipes_path, 0);
 	pid = fork();
-	free_pipes_error(pipes, pipes_path, pid < 0, "fork failed at child_fork_first");
+	free_pipes_error(pipes, pipes_path, pid < 0, "fork failed at child_fork_last");
 	if (pid == 0)
 		whereis(pipes_path, argv[ptr_arr_len(argv) - 2], envp);
 	else
@@ -48,11 +48,38 @@ void	child_fork_second(int *pipes, char **envp, char **argv)
 		close(pipes_path[1]);
 		if (child2(read_from_pipe_path(pipes_path[0]),
 				ft_split(argv[ptr_arr_len(argv) - 2], ' '),
-				pipes, argv[ptr_arr_len(argv) - 2]) < 0)
+				pipes, argv[ptr_arr_len(argv) - 1]) < 0)
 		{
 			close(pipes_path[0]);
 			free(pipes_path);
 			exit(EXIT_FAILURE);
 		}
+	}
+}
+
+void	child_fork_loop(int *pipes, char **envp, char **argv, int j)
+{
+	int		*pipes_path;
+	int		status;
+	char	*path;
+	pid_t	pid;
+
+	pipes_path = create_pipes(pipes_path, 0);
+	pid = fork();
+	free_pipes_error(pipes, pipes_path, pid < 0, "fork failed at child_fork_loop");
+	if (pid == 0)
+		whereis(pipes_path, argv[ptr_arr_len(argv) - 2], envp);
+	else
+	{
+		waitpid(pid, &status, 0);
+		close(pipes_path[1]);
+		if (dup2(pipes[0], STDIN_FILENO) < 0)
+			;//ERROR
+		if (dup2(pipes[1], STDOUT_FILENO) < 0)
+			;//ERROR
+		//printf("%s\n", path = );
+		execve(read_from_pipe_path(pipes_path[0]),
+				ft_split(argv[j + 3], ' '), envp);
+		exit(EXIT_FAILURE);
 	}
 }

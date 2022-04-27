@@ -110,7 +110,6 @@ int	main(int argc, char **argv, char **envp)
 	int		*pipes;
 	int		*pipes_for_path;
 	int		j;
-	char	*path;
 	pid_t	*pids;
 	pid_t	pid;
 
@@ -134,43 +133,13 @@ int	main(int argc, char **argv, char **envp)
 
 			pids[j + 1] = fork();
 			if (pids[j + 1] == 0)
-			{
-				pipes_for_path = create_pipes(pipes_for_path, 0);
-				pid = fork();
-				if (pid == 0)
-					whereis(pipes_for_path, argv[j + 3], envp);
-				waitpid(pid, &status, 0);
-				close(pipes_for_path[1]);
-				if (dup2(pipes[0], STDIN_FILENO) < 0)
-					;//ERROR
-				if (dup2(pipes[1], STDOUT_FILENO) < 0)
-					;//ERROR
-				printf("%s\n", path = read_from_pipe_path(pipes_for_path[0]));
-				execve(path,
-						ft_split(argv[j + 3], ' '), envp);
-				//ERROR
-				exit(EXIT_FAILURE);
-			}
+				child_fork_loop(pipes, envp, argv, j);
 			else
 				waitpid(pids[j + 1], &status, 0);
 		}
 		pids[argc - 2] = fork();
 		if (pids[argc - 2] == 0)
-		{
-			pipes_for_path = create_pipes(pipes_for_path, 0);
-			pid = fork();
-			if (pid == 0)
-				whereis(pipes_for_path, argv[argc - 2], envp);
-			waitpid(pid, &status, 0);
-			close(pipes_for_path[1]);
-			if (child2(read_from_pipe_path(pipes_for_path[0]),
-					ft_split(argv[argc - 2], ' '), pipes, argv[argc - 1]) < 0)
-			{
-				close(pipes_for_path[0]);
-				free(pipes_for_path);
-				exit(EXIT_FAILURE);
-			}
-		}
+			child_fork_last(pipes, envp, argv);
 		else
 		{
 			close(pipes[0]);
