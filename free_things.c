@@ -50,31 +50,20 @@ int	free_error_args(int *pipes, char *path, char **args, char *errmsg)
 {
 	free(pipes);
 	free(path);
-	free_ptr_arr((void **)args, ptr_arr_len(args), 0);
+	free_ptr_arr(args);
 	perror(errmsg);
 	return (-1);
 }
 
-void	free_ptr_arr(void **ptr, int size, int type)
+void	free_ptr_arr(char **ptr)
 {
 	int	i;
 
 	i = 0;
-	if (type == 0)
+	while (i < ptr_arr_len(ptr))
 	{
-		while (i < size)
-		{
-			free(((char **)ptr)[i]);
-			i++;
-		}
-	}
-	else if (type == 1)
-	{
-		while (i < size)
-		{
-			free(((int **)ptr)[i]);
-			i++;
-		}
+		free(ptr[i]);
+		i++;
 	}
 	free(ptr);
 }

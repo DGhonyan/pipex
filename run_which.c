@@ -32,6 +32,6 @@ void	whereis(int *pipes, char *command, char **envp)
 	free(script);
 	execve("/usr/bin/which", args, envp);
 	perror("Execve failed at which_output()");
-	free_ptr_arr((void **)args, ptr_arr_len(args), 0);
+	free_ptr_arr(args);
 	exit (EXIT_FAILURE);
 }

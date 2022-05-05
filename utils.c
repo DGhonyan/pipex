@@ -44,8 +44,7 @@ int	check_args(char *s1, char *s2, int argc)
 
 	if (argc < 5)
 	{
-		/// TODO change printf
-		printf("Error: Too few arguments\n");
+		ft_printf("Error: Too few arguments\n");
 		exit(EXIT_FAILURE);
 	}
 	a = access(s1, R_OK);

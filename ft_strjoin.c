@@ -24,19 +24,6 @@ static size_t	len(const char *s)
 	return (i);
 }
 
-static void	ft_strcpy(char *s1, char *s2)
-{
-	int	i;
-
-	i = 0;
-	while (s2[i])
-	{
-		s1[i] = s2[i];
-		i++;
-	}
-	s1[i] = '\0';
-}
-
 char	*ft_strjoin(char *s1, char *s2)
 {
 	size_t	i;

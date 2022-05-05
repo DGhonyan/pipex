@@ -1,12 +1,12 @@
 NAME = pipex
-CC = cc # TODO add flags
+CC = cc -Wall -Wextra -Werror
 SRCS = $(wildcard *.c)
 OBJS = $(SRCS:.c=.o)
 
 all: $(NAME)
 
 $(NAME): $(OBJS)
-	$(CC) $(OBJS) -o $(NAME)
+	$(CC) $(OBJS) *.a -o $(NAME)
 
 $(OBJS):
 	$(CC) -c $(SRCS)

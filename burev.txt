@@ -1,0 +1,5 @@
+Makefile, a.out, barev.txt, burev.txt, child_forks.c, child_forks.o, 
+close_pipes.c, close_pipes.o, free_things.c, free_things.o, ft_split.c, 
+ft_split.o, ft_strjoin.c, ft_strjoin.o, libftprintf.a, perror_exit.c, 
+perror_exit.o, pipex, pipex.h, pipex_test.c, pipex_test.o, run_which.c, 
+run_which.o, test.c, test.o, utils.c, utils.o

@@ -88,8 +88,6 @@ int	child2(char *path, char **args, int *pipes, char *file)
 	int	fd;
 
 	free_error(pipes, path, !args, "malloc failed at ft_split | child2");
-	if (close(pipes[1]) < 0)
-		return (free_error_args(pipes, path, args, "close failed at child2"));
 	fd = open(file, O_WRONLY | O_CLOEXEC | O_TRUNC);
 	if (fd < 0)
 		return (free_error_args(pipes, path, args, "open failed at child2"));
@@ -108,16 +106,10 @@ int	main(int argc, char **argv, char **envp)
 {
 	int		status;
 	int		*pipes;
-	int		*pipes_for_path;
-	int		j;
-	pid_t	*pids;
-	pid_t	pid;
+	pid_t	pids[2];
 
-	j = 0;
 	check_args(argv[1], argv[argc - 1], argc);
-	
-	pids = (pid_t *)malloc(sizeof (*pids) * (argc - 3));
-
+	pipes = NULL;
 	pipes = create_pipes(pipes, 0);
 	pids[0] = fork();
 	free_error(pipes, NULL, pids[0] < 0, "Can't fork process");
@@ -125,26 +117,25 @@ int	main(int argc, char **argv, char **envp)
 		child_fork_first(pipes, envp, argv);
 	else if (pids[0] > 0)
 	{
+		close(pipes[1]);
 		waitpid(pids[0], &status, 0);
-		printf("first process exited with status %d", WEXITSTATUS(status));
-		printf("\n%d\n", argc - 5);
-		for (j = 0; j < argc - 5; j++)
-		{
-
-			pids[j + 1] = fork();
-			if (pids[j + 1] == 0)
-				child_fork_loop(pipes, envp, argv, j);
-			else
-				waitpid(pids[j + 1], &status, 0);
-		}
-		pids[argc - 2] = fork();
-		if (pids[argc - 2] == 0)
+		pids[1] = fork();
+		if (pids[1] == 0)
 			child_fork_last(pipes, envp, argv);
 		else
 		{
 			close(pipes[0]);
 			waitpid(pids[1], &status, 0);
-			printf("back to parent\n");
 		}
 	}
 }
+
+// while (j--)
+// {
+
+// 	pids[j + 1] = fork();
+// 	if (pids[j + 1] == 0)
+// 		child_fork_loop(pipes, envp, argv, j);
+// 	else
+// 		waitpid(pids[j + 1], &status, 0);
+// }
