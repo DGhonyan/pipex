@@ -38,6 +38,13 @@ int	ptr_arr_len(char **arr)
 	return (i);
 }
 
+void	free_struct(t_args *args)
+{
+	free_ptr_arr(args->args);
+	free(args->pipes);
+	free(args);
+}
+
 int	check_args(char *s1, char *s2, int argc)
 {
 	int	a;

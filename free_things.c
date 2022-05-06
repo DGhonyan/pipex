@@ -60,7 +60,7 @@ void	free_ptr_arr(char **ptr)
 	int	i;
 
 	i = 0;
-	while (i < ptr_arr_len(ptr))
+	while (ptr[i])
 	{
 		free(ptr[i]);
 		i++;

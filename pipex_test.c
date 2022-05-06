@@ -126,8 +126,10 @@ int	main(int argc, char **argv, char **envp)
 		{
 			close(pipes[0]);
 			waitpid(pids[1], &status, 0);
+			free(pipes);
 		}
 	}
+	exit(EXIT_SUCCESS);
 }
 
 // while (j--)
