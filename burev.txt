@@ -1,5 +1,30 @@
-Makefile, a.out, barev.txt, burev.txt, child_forks.c, child_forks.o, 
-close_pipes.c, close_pipes.o, free_things.c, free_things.o, ft_split.c, 
-ft_split.o, ft_strjoin.c, ft_strjoin.o, libftprintf.a, perror_exit.c, 
-perror_exit.o, pipex, pipex.h, pipex_test.c, pipex_test.o, run_which.c, 
-run_which.o, test.c, test.o, utils.c, utils.o
+total 156
+-rw-r--r-- 1 root root   381 May  6 12:08 Makefile
+-rwxr-xr-x 1 root root 22672 Apr 27 15:35 a.out
+-rw-r--r-- 1 root root     5 May  6 12:05 barev.txt
+-rw-r--r-- 1 root root   325 May  6 12:09 burev.txt
+-rw-r--r-- 1 root root  2956 May  6 12:05 child_forks.c
+-rw-r--r-- 1 root root  3392 May  6 12:06 child_forks.o
+-rw-r--r-- 1 root root     0 Apr 25 13:18 close_pipes.c
+-rw-r--r-- 1 root root   936 May  6 12:06 close_pipes.o
+-rw-r--r-- 1 root root  1729 May  6 12:05 free_things.c
+-rw-r--r-- 1 root root  2624 May  6 12:06 free_things.o
+drwxr-xr-x 2 root root  4096 May  6 12:09 ft_printf
+-rw-r--r-- 1 root root  2301 May  6 12:05 ft_split.c
+-rw-r--r-- 1 root root  2712 May  6 12:06 ft_split.o
+-rw-r--r-- 1 root root  1623 May  6 12:05 ft_strjoin.c
+-rw-r--r-- 1 root root  2120 May  6 12:06 ft_strjoin.o
+-rw-r--r-- 1 root root 10904 May  6 12:05 libftprintf.a
+-rw-r--r-- 1 root root  1128 Apr 25 13:18 perror_exit.c
+-rw-r--r-- 1 root root  1488 May  6 12:06 perror_exit.o
+-rwxr-xr-x 1 root root 23264 May  6 12:09 pipex
+-rw-r--r-- 1 root root  2086 May  6 12:05 pipex.h
+-rw-r--r-- 1 root root     0 May  5 15:23 pipex_test.
+-rw-r--r-- 1 root root  3984 May  6 12:05 pipex_test.c
+-rw-r--r-- 1 root root  5472 May  6 12:06 pipex_test.o
+-rw-r--r-- 1 root root  1488 May  6 12:05 run_which.c
+-rw-r--r-- 1 root root  2408 May  6 12:06 run_which.o
+-rw-r--r-- 1 root root     0 Apr 27 12:05 test.c
+-rw-r--r-- 1 root root   928 May  6 12:06 test.o
+-rw-r--r-- 1 root root  1792 May  6 12:05 utils.c
+-rw-r--r-- 1 root root  2848 May  6 12:06 utils.o
