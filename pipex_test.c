@@ -66,40 +66,38 @@ int	child1(char *path, char **args, int *pipes, char *file)
 {
 	int	fd;
 
-	free_error(pipes, path, !args, "malloc failed at ft_split | child1");
 	if (close(pipes[0]) < 0)
-		return (free_error_args(pipes, path, args, "close failed at child1"));
+		return (perror_ret("close failed at child1"));
 	fd = open(file, O_RDONLY | O_CLOEXEC);
 	if (fd < 0)
-		return (free_error_args(pipes, path, args, "open failed at child1"));
+		return (perror_ret("open failed at child1"));
 	if (dup2(pipes[1], STDOUT_FILENO) < 0)
-		return (free_error_args(pipes, path, args, "dup2 failed at child1"));
+		return (perror_ret("dup2 failed at child1"));
 	if (dup2(fd, STDIN_FILENO) < 0)
-		return (free_error_args(pipes, path, args, "dup2 failed at child1"));
+		return (perror_ret("dup2 failed at child1"));
 	if (close(pipes[1]) < 0)
-		return (free_error_args(pipes, path, args,
-				"close failed at child1 again"));
+		return (perror_ret("close failed at child1 again"));
 	execve(path, args, NULL);
-	return (free_error_args(pipes, path, args, "Execve failed at child1"));
+	return (perror_ret("Execve failed at child1"));
 }
 
 int	child2(char *path, char **args, int *pipes, char *file)
 {
 	int	fd;
 
-	free_error(pipes, path, !args, "malloc failed at ft_split | child2");
+	if (close(pipes[1]) < 0)
+		return (perror_ret("close failed at child2"));
 	fd = open(file, O_WRONLY | O_CLOEXEC | O_TRUNC);
 	if (fd < 0)
-		return (free_error_args(pipes, path, args, "open failed at child2"));
+		return (perror_ret("open failed at child2"));
 	if (dup2(pipes[0], STDIN_FILENO) < 0)
-		return (free_error_args(pipes, path, args, "dup2 failed at child2"));
+		return (perror_ret("dup2 failed at child2"));
 	if (dup2(fd, STDOUT_FILENO) < 0)
-		return (free_error_args(pipes, path, args, "dup2 failed at child2"));
+		return (perror_ret("dup2 failed at child2"));
 	if (close(pipes[0]) < 0)
-		return (free_error_args(pipes, path, args,
-				"close failed at child2 again"));
+		return (perror_ret("close failed at child2 again"));
 	execve(path, args, NULL);
-	return (free_error_args(pipes, path, args, "Execve failed at child2"));
+	return (perror_ret("Execve failed at child2"));
 }
 
 int	main(int argc, char **argv, char **envp)
@@ -109,8 +107,7 @@ int	main(int argc, char **argv, char **envp)
 	pid_t	pids[2];
 
 	check_args(argv[1], argv[argc - 1], argc);
-	pipes = NULL;
-	pipes = create_pipes(pipes, 0);
+	pipes = some_unrelated_func();
 	pids[0] = fork();
 	free_error(pipes, NULL, pids[0] < 0, "Can't fork process");
 	if (pids[0] == 0)

@@ -18,11 +18,6 @@
 #include <sys/wait.h>
 #include "pipex.h"
 
-typedef struct s_args {
-	int		*pipes;
-	char	**args;
-}	t_args;
-
 t_args	*allocate_struct(char *split_str)
 {
 	t_args	*args;
@@ -37,54 +32,55 @@ t_args	*allocate_struct(char *split_str)
 void	child_fork_first(int *pipes, char **envp, char **argv)
 {
 	int		status;
+	char	*path;
 	pid_t	pid;
 	t_args	*args;
 
 	args = allocate_struct(argv[2]);
 	pid = fork();
-	free_pipes_error(pipes, args->pipes, pid < 0,
+	if (pid < 0)
+	{
+		free_struct(args);
+		free_pipes_error(pipes, NULL, 1,
 			"fork failed at child_fork_first");
+	}
 	if (pid == 0)
 		whereis(args->pipes, argv[2], envp);
 	else
 	{
 		close(args->pipes[1]);
 		waitpid(pid, &status, 0);
-		child1(read_from_pipe_path(args->pipes[0]),
-				args->args, pipes, argv[1]);
-		close(args->pipes[0]);
-		free_ptr_arr(args->args);
-		free(args->pipes);
-		exit(EXIT_FAILURE);
+		path = read_from_pipe_path(args->pipes[0]);
+		child1(path, args->args, pipes, argv[1]);
+		perror("Call to child1 failed");
+		call_free_and_exit(path, args, pipes);
 	}
-	//exit(EXIT_FAILURE);
 }
 
 void	child_fork_last(int *pipes, char **envp, char **argv)
 {
-	int		*pipes_path;
 	int		status;
+	char	*path;
 	pid_t	pid;
+	t_args	*args;
 
-	pipes_path = NULL;
-	pipes_path = create_pipes(pipes_path, 0);
+	args = allocate_struct(argv[ptr_arr_len(argv) - 2]);
 	pid = fork();
-	free_pipes_error(pipes, pipes_path, pid < 0,
+	if (pid < 0)
+	{
+		free_struct(args);
+		free_pipes_error(pipes, NULL, pid < 0,
 			"fork failed at child_fork_last");
+	}
 	if (pid == 0)
-		whereis(pipes_path, argv[ptr_arr_len(argv) - 2], envp);
+		whereis(args->pipes, argv[ptr_arr_len(argv) - 2], envp);
 	else
 	{
-		close(pipes_path[1]);
+		close(args->pipes[1]);
 		waitpid(pid, &status, 0);
-		if (child2(read_from_pipe_path(pipes_path[0]),
-					ft_split(argv[ptr_arr_len(argv) - 2], ' '),
-					pipes, argv[ptr_arr_len(argv) - 1]) < 0)
-		{
-			close(pipes_path[0]);
-			free(pipes_path);
-			exit(EXIT_FAILURE);
-		}
+		path = read_from_pipe_path(args->pipes[0]);
+		child2(path, args->args, pipes, argv[ptr_arr_len(argv) - 1]);
+		call_free_and_exit(path, args, pipes);
 	}
 }
 

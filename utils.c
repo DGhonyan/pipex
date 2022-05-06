@@ -38,11 +38,10 @@ int	ptr_arr_len(char **arr)
 	return (i);
 }
 
-void	free_struct(t_args *args)
+int	perror_ret(char *errmsg)
 {
-	free_ptr_arr(args->args);
-	free(args->pipes);
-	free(args);
+	perror(errmsg);
+	return (-1);
 }
 
 int	check_args(char *s1, char *s2, int argc)

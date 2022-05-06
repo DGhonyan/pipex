@@ -46,16 +46,14 @@ void	free_not_error(int *pipes, char *path)
 	free(path);
 }
 
-int	free_error_args(int *pipes, char *path, char **args, char *errmsg)
+void	free_struct(t_args *args)
 {
-	free(pipes);
-	free(path);
-	free_ptr_arr(args);
-	perror(errmsg);
-	return (-1);
+	free_ptr_arr(args->args);
+	free(args->pipes);
+	free(args);
 }
 
-void	free_ptr_arr(char **ptr)
+void	*free_ptr_arr(char **ptr)
 {
 	int	i;
 
@@ -66,4 +64,5 @@ void	free_ptr_arr(char **ptr)
 		i++;
 	}
 	free(ptr);
+	return (NULL);
 }
