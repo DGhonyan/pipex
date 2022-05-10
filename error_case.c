@@ -10,13 +10,19 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <unistd.h>
-#include <fcntl.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <sys/types.h>
-#include <sys/wait.h>
 #include "pipex.h"
+
+int	another_function_for_which(int *pipes, char *path, int c, char *errmsg)
+{
+	if (c)
+	{
+		free(pipes);
+		free(path);
+		perror(errmsg);
+		return (-1);
+	}
+	return (0);
+}
 
 void	call_free_and_exit(char *path, t_args *args, int *pipes)
 {
@@ -33,13 +39,13 @@ int	*some_unrelated_func(void)
 	pipes = (int *)malloc(2 * sizeof (*pipes));
 	if (!pipes)
 	{
-		perror("malloc failed at create_pipes");
+		perror("malloc failed at some_unrelated_func");
 		exit (EXIT_FAILURE);
 	}
 	if (pipe(pipes) < 0)
 	{
 		free(pipes);
-		perror("pipe failed at create_pipes");
+		perror("pipe failed at some_unrelated_func");
 		exit (EXIT_FAILURE);
 	}
 	return (pipes);

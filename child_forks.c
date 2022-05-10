@@ -10,12 +10,6 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <unistd.h>
-#include <fcntl.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <sys/types.h>
-#include <sys/wait.h>
 #include "pipex.h"
 
 t_args	*allocate_struct(char *split_str)
@@ -23,9 +17,9 @@ t_args	*allocate_struct(char *split_str)
 	t_args	*args;
 
 	args = (t_args *)malloc(sizeof (*args));
-	(args)->args = ft_split(split_str, ' ');
-	(args)->pipes = NULL;
-	(args)->pipes = create_pipes((args)->pipes, 0);
+	args->args = ft_split(split_str, ' ');
+	args->pipes = NULL;
+	args->pipes = create_pipes(args->pipes, 0);
 	return (args);
 }
 

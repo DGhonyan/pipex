@@ -14,8 +14,12 @@
 
 # define PIPEX_H
 
+# include <unistd.h>
+# include <fcntl.h>
+# include <stdio.h>
 # include <stdlib.h>
-# include <string.h>
+# include <sys/types.h>
+# include <sys/wait.h>
 
 typedef struct s_args {
 	int		*pipes;
@@ -26,15 +30,17 @@ int		ft_printf(const char *s, ...);
 int		ptr_arr_len(char **arr);
 int		check_args(char *s1, char *s2, int argc);
 int		perror_ret(char *errmsg);
-int		*create_pipes(int *pipes, int condition);
-int		*some_unrelated_func(void);
 int		child1(char *path, char **args, int *pipes, char *file);
 int		child2(char *path, char **args, int *pipes, char *file);
+int		*create_pipes(int *pipes, int condition);
+int		*some_unrelated_func(void);
+int		another_function_for_which(int *pipes, char *path, int c, char *errmsg);
+
 char	*new_path(char *path);
 char	*ft_strjoin(char *s1, char *s2);
 char	*ft_strjoin_for_read(char *s1, char c);
+char	*read_from_pipe_path(int pipe);
 char	**ft_split(char const *s, char c);
-char	**ft_kinda_split(char **s, char *new);
 void	call_free_and_exit(char *path, t_args *args, int *pipes);
 void	whereis(int *pipes, char *command, char **envp);
 void	perror_exit(int condition, char *errmsg);
@@ -46,7 +52,6 @@ void	child_fork_first(int *pipes, char **envp, char **argv);
 void	child_fork_last(int *pipes, char **envp, char **argv);
 void	child_fork_loop(int *pipes, char **envp, char **argv, int j);
 void	*free_ptr_arr(char **arr);
-char	*read_from_pipe_path(int pipe);
 size_t	ft_strlen(char *s);
 
 #endif

@@ -10,12 +10,6 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <unistd.h>
-#include <fcntl.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <sys/types.h>
-#include <sys/wait.h>
 #include "pipex.h"
 
 char	*read_from_pipe(int pipe)
@@ -23,9 +17,7 @@ char	*read_from_pipe(int pipe)
 	char	*s;
 	char	c;
 	int		a;
-	int		i;
 
-	i = 0;
 	s = NULL;
 	while (1)
 	{
@@ -35,7 +27,6 @@ char	*read_from_pipe(int pipe)
 			break ;
 		s = ft_strjoin_for_read(s, c);
 		free_error(NULL, NULL, !s, "malloc failed at read_from_pipe");
-		i++;
 	}
 	return (s);
 }
@@ -45,19 +36,16 @@ char	*read_from_pipe_path(int pipe)
 	char	*s;
 	char	c;
 	int		a;
-	int		i;
 
-	i = 0;
 	s = NULL;
 	while (1)
 	{
 		a = read(pipe, &c, 1);
-		free_error(NULL, s, a == -1, "read() failed at read_from_pipe()");
-		if (a == 0 || c == '\n' || c == ':')
+		free_error(NULL, s, a == -1, "read() failed at read_from_pipe_path()");
+		if (a == 0 || c == '\n')
 			break ;
 		s = ft_strjoin_for_read(s, c);
-		free_error(NULL, NULL, !s, "malloc failed at read_from_pipe");
-		i++;
+		free_error(NULL, NULL, !s, "malloc failed at read_from_pipe_path");
 	}
 	return (s);
 }
@@ -112,7 +100,7 @@ int	main(int argc, char **argv, char **envp)
 	free_error(pipes, NULL, pids[0] < 0, "Can't fork process");
 	if (pids[0] == 0)
 		child_fork_first(pipes, envp, argv);
-	else if (pids[0] > 0)
+	else
 	{
 		close(pipes[1]);
 		waitpid(pids[0], &status, 0);

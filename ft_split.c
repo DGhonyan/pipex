@@ -10,7 +10,6 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdlib.h>
 #include "pipex.h"
 
 static size_t	count(char const *s, char c)

@@ -10,13 +10,8 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <unistd.h>
-#include <fcntl.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <sys/types.h>
-#include <sys/wait.h>
 #include "pipex.h"
+#include "colors.h"
 
 size_t	ft_strlen(char *s)
 {
@@ -50,7 +45,12 @@ int	check_args(char *s1, char *s2, int argc)
 
 	if (argc < 5)
 	{
-		ft_printf("Error: Too few arguments\n");
+		ft_printf(RED "Error: Not enough arguments\n");
+		exit(EXIT_FAILURE);
+	}
+	else if (argc > 5)
+	{
+		ft_printf(RED "Error: Too many arguments\n");
 		exit(EXIT_FAILURE);
 	}
 	a = access(s1, R_OK);
