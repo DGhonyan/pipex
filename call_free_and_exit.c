@@ -11,18 +11,7 @@
 /* ************************************************************************** */
 
 #include "pipex.h"
-
-int	another_function_for_which(int *pipes, char *path, int c, char *errmsg)
-{
-	if (c)
-	{
-		free(pipes);
-		free(path);
-		perror(errmsg);
-		return (-1);
-	}
-	return (0);
-}
+#include "colors.h"
 
 void	call_free_and_exit(char *path, t_args *args, int *pipes)
 {
@@ -30,6 +19,28 @@ void	call_free_and_exit(char *path, t_args *args, int *pipes)
 	free(path);
 	free_struct(args);
 	exit(EXIT_FAILURE);
+}
+
+void	free_error_child1(int *pipes, char *path, int condition)
+{
+	if (condition)
+	{
+		free(pipes);
+		free(path);
+		ft_printf(RED "command 1 failed, exit\n" COLOR_RESET);
+		exit(EXIT_FAILURE);
+	}
+}
+
+void	free_error_child2(int *pipes, char *path, int condition)
+{
+	if (condition)
+	{
+		free(pipes);
+		free(path);
+		ft_printf(RED "command 2 failed, exit\n" COLOR_RESET);
+		exit(EXIT_FAILURE);
+	}
 }
 
 int	*some_unrelated_func(void)

@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "pipex.h"
+#include "colors.h"
 
 char	*read_from_pipe(int pipe)
 {
@@ -90,7 +91,7 @@ int	child2(char *path, char **args, int *pipes, char *file)
 
 int	main(int argc, char **argv, char **envp)
 {
-	int		status;
+	int		s;
 	int		*pipes;
 	pid_t	pids[2];
 
@@ -100,20 +101,19 @@ int	main(int argc, char **argv, char **envp)
 	free_error(pipes, NULL, pids[0] < 0, "Can't fork process");
 	if (pids[0] == 0)
 		child_fork_first(pipes, envp, argv);
-	else
-	{
-		close(pipes[1]);
-		waitpid(pids[0], &status, 0);
-		pids[1] = fork();
-		if (pids[1] == 0)
-			child_fork_last(pipes, envp, argv);
-		else
-		{
-			close(pipes[0]);
-			waitpid(pids[1], &status, 0);
-			free(pipes);
-		}
-	}
+	close(pipes[1]);
+	waitpid(pids[0], &s, 0);
+	if (WIFEXITED(s) && WEXITSTATUS(s) == EXIT_FAILURE)
+		free_error_child1(pipes, NULL, 1);
+	pids[1] = fork();
+	if (pids[1] == 0)
+		child_fork_last(pipes, envp, argv);
+	close(pipes[0]);
+	waitpid(pids[1], &s, 0);
+	if (WIFEXITED(s) && WEXITSTATUS(s) == EXIT_FAILURE)
+		free_error_child2(pipes, NULL, 1);
+	free(pipes);
+	ft_printf(GREEN "looks like success to me\n" COLOR_RESET);
 	exit(EXIT_SUCCESS);
 }
 

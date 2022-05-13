@@ -25,7 +25,7 @@ t_args	*allocate_struct(char *split_str)
 
 void	child_fork_first(int *pipes, char **envp, char **argv)
 {
-	int		status;
+	int		s;
 	char	*path;
 	pid_t	pid;
 	t_args	*args;
@@ -40,20 +40,18 @@ void	child_fork_first(int *pipes, char **envp, char **argv)
 	}
 	if (pid == 0)
 		whereis(args->pipes, argv[2], envp);
-	else
-	{
-		close(args->pipes[1]);
-		waitpid(pid, &status, 0);
-		path = read_from_pipe_path(args->pipes[0]);
-		child1(path, args->args, pipes, argv[1]);
-		perror("Call to child1 failed");
-		call_free_and_exit(path, args, pipes);
-	}
+	close(args->pipes[1]);
+	waitpid(pid, &s, 0);
+	if (WIFEXITED(s) && WEXITSTATUS(s) == EXIT_FAILURE)
+		call_free_and_exit(NULL, args, pipes);
+	path = read_from_pipe_path(args->pipes[0]);
+	child1(path, args->args, pipes, argv[1]);
+	call_free_and_exit(path, args, pipes);
 }
 
 void	child_fork_last(int *pipes, char **envp, char **argv)
 {
-	int		status;
+	int		s;
 	char	*path;
 	pid_t	pid;
 	t_args	*args;
@@ -68,14 +66,13 @@ void	child_fork_last(int *pipes, char **envp, char **argv)
 	}
 	if (pid == 0)
 		whereis(args->pipes, argv[ptr_arr_len(argv) - 2], envp);
-	else
-	{
-		close(args->pipes[1]);
-		waitpid(pid, &status, 0);
-		path = read_from_pipe_path(args->pipes[0]);
-		child2(path, args->args, pipes, argv[ptr_arr_len(argv) - 1]);
-		call_free_and_exit(path, args, pipes);
-	}
+	close(args->pipes[1]);
+	waitpid(pid, &s, 0);
+	if (WIFEXITED(s) && WEXITSTATUS(s) == EXIT_FAILURE)
+		call_free_and_exit(NULL, args, pipes);
+	path = read_from_pipe_path(args->pipes[0]);
+	child2(path, args->args, pipes, argv[ptr_arr_len(argv) - 1]);
+	call_free_and_exit(path, args, pipes);
 }
 
 //void	child_fork_loop(int *pipes, char **envp, char **argv, int j)

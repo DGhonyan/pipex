@@ -18,7 +18,8 @@ void	free_error(int *pipes, char *path, int condition, char *errmsg)
 	{
 		free(pipes);
 		free(path);
-		perror(errmsg);
+		if (errmsg)
+			perror(errmsg);
 		exit(EXIT_FAILURE);
 	}
 }
