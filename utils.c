@@ -6,7 +6,7 @@
 /*   By: dghonyan <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/24 16:51:48 by dghonyan          #+#    #+#             */
-/*   Updated: 2022/04/24 16:51:49 by dghonyan         ###   ########.fr       */
+/*   Updated: 2022/05/14 19:28:27 by dghonyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,8 +55,6 @@ int	check_args(char *s1, char *s2, int argc)
 	}
 	a = access(s1, R_OK);
 	perror_exit(a == -1, "Cannot read from a file");
-	a = access(s2, W_OK);
-	perror_exit(a == -1, "Cannot write to a file");
 	return (0);
 }
 

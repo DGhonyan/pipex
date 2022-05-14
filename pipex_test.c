@@ -6,7 +6,7 @@
 /*   By: dghonyan <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/18 19:03:43 by dghonyan          #+#    #+#             */
-/*   Updated: 2022/04/24 16:51:17 by dghonyan         ###   ########.fr       */
+/*   Updated: 2022/05/14 19:27:36 by dghonyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,7 @@ int	child2(char *path, char **args, int *pipes, char *file)
 
 	if (close(pipes[1]) < 0)
 		return (perror_ret("close failed at child2"));
-	fd = open(file, O_WRONLY | O_CLOEXEC | O_TRUNC);
+	fd = open(file, O_WRONLY | O_CLOEXEC | O_TRUNC | O_CREAT, 0644);
 	if (fd < 0)
 		return (perror_ret("open failed at child2"));
 	if (dup2(pipes[0], STDIN_FILENO) < 0)
