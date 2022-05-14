@@ -6,7 +6,7 @@
 /*   By: dghonyan <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/24 16:51:48 by dghonyan          #+#    #+#             */
-/*   Updated: 2022/05/14 19:28:27 by dghonyan         ###   ########.fr       */
+/*   Updated: 2022/05/14 19:29:30 by dghonyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ int	perror_ret(char *errmsg)
 	return (-1);
 }
 
-int	check_args(char *s1, char *s2, int argc)
+int	check_args(char *s1, int argc)
 {
 	int	a;
 

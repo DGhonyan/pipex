@@ -6,7 +6,7 @@
 /*   By: dghonyan <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/18 19:03:43 by dghonyan          #+#    #+#             */
-/*   Updated: 2022/05/14 19:27:36 by dghonyan         ###   ########.fr       */
+/*   Updated: 2022/05/14 19:29:56 by dghonyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,7 +95,7 @@ int	main(int argc, char **argv, char **envp)
 	int		*pipes;
 	pid_t	pids[2];
 
-	check_args(argv[1], argv[argc - 1], argc);
+	check_args(argv[1], argc);
 	pipes = some_unrelated_func();
 	pids[0] = fork();
 	free_error(pipes, NULL, pids[0] < 0, "Can't fork process");

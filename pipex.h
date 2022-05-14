@@ -6,7 +6,7 @@
 /*   By: dghonyan <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/24 16:51:20 by dghonyan          #+#    #+#             */
-/*   Updated: 2022/04/24 16:51:22 by dghonyan         ###   ########.fr       */
+/*   Updated: 2022/05/14 19:29:42 by dghonyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ typedef struct s_args {
 
 int		ft_printf(const char *s, ...);
 int		ptr_arr_len(char **arr);
-int		check_args(char *s1, char *s2, int argc);
+int		check_args(char *s1, int argc);
 int		perror_ret(char *errmsg);
 int		child1(char *path, char **args, int *pipes, char *file);
 int		child2(char *path, char **args, int *pipes, char *file);
