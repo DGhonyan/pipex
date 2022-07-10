@@ -39,7 +39,7 @@ void	child_fork_first(int *pipes, char **envp, char **argv)
 			"fork failed at child_fork_first");
 	}
 	if (pid == 0)
-		whereis(args->pipes, argv[2], envp);
+		whereis(argv[2], envp);
 	close(args->pipes[1]);
 	waitpid(pid, &s, 0);
 	if (WIFEXITED(s) && WEXITSTATUS(s) == EXIT_FAILURE)
@@ -49,7 +49,7 @@ void	child_fork_first(int *pipes, char **envp, char **argv)
 	call_free_and_exit(path, args, pipes);
 }
 
-void	child_fork_last(int *pipes, char **envp, char **argv)
+void	child_fork_last(int *pipes, char **envp, char **argv, int argc)
 {
 	int		s;
 	char	*path;
@@ -65,7 +65,7 @@ void	child_fork_last(int *pipes, char **envp, char **argv)
 			"fork failed at child_fork_last");
 	}
 	if (pid == 0)
-		whereis(args->pipes, argv[ptr_arr_len(argv) - 2], envp);
+		whereis(argv[argc - 2], envp);
 	close(args->pipes[1]);
 	waitpid(pid, &s, 0);
 	if (WIFEXITED(s) && WEXITSTATUS(s) == EXIT_FAILURE)

@@ -95,9 +95,12 @@ int	main(int argc, char **argv, char **envp)
 	int		pipes[2];
 	pid_t	pids[2];
 
-	check_args(argv[1], argc);
+	check_args(argv, argc, envp);
 	if (pipe(pipes) < 0)
+	{
+		perror("pipe() failed");
 		exit(EXIT_FAILURE);
+	}
 	pids[0] = fork();
 	free_error(pipes, NULL, pids[0] < 0, "Can't fork process");
 	if (pids[0] == 0)
@@ -105,7 +108,7 @@ int	main(int argc, char **argv, char **envp)
 	close(pipes[1]);
 	pids[1] = fork();
 	if (pids[1] == 0)
-		child_fork_last(pipes, envp, argv);
+		child_fork_last(pipes, envp, argv, argc);
 	close(pipes[0]);
 	waitpid(pids[0], &s, 0);
 	waitpid(pids[1], &s, 0);

@@ -12,34 +12,41 @@
 
 #include "pipex.h"
 
-static void	_free(int *pipes, char *script, char **args, char *errmsg)
+static char	*hello(char **arr, char *s1, char *s2, char *ret);
+
+char	*whereis(char *command, char **envp)
 {
-	free(pipes);
-	free(script);
-	free_ptr_arr(args);
-	perror(errmsg);
-	exit(EXIT_FAILURE);
+	int		i;
+	char	*slash;
+	char	*exec;
+	char	**path;
+
+	i = 0;
+	while (ft_strncmp(envp[i], "PATH=", 5))
+		i++;
+	path = ft_split(envp[i] + 5, ':');
+	i = 0;
+	while (path[i])
+	{
+		slash = ft_strjoin(path[i], "/");
+		if (!slash)
+			return (hello(path, NULL, NULL, NULL));
+		exec = ft_strjoin(slash, command);
+		if (!exec)
+			return (hello(path, slash, NULL, NULL));
+		if (!access(exec, X_OK))
+			return (hello(path, slash, NULL, exec));
+		hello(NULL, slash, exec, NULL);
+		i++;
+	}
+	return (hello(path, NULL, NULL, NULL));
 }
 
-void	whereis(int *pipes, char *command, char **envp)
+static char	*hello(char **arr, char *s1, char *s2, char *ret)
 {
-	char	**args;
-	char	*script;
-
-	if (close(pipes[0]) < 0)
-		_free(pipes, NULL, NULL, "close failed at whereis()");
-	if (dup2(pipes[1], STDOUT_FILENO) < 0)
-		_free(pipes, NULL, NULL, "dup2 failed at whereis()");
-	args = ft_split(command, ' ');
-	if (!args)
-		_free(pipes, NULL, NULL, "split failed at whereis()");
-	script = ft_strjoin("which ", args[0]);
-	if (!script)
-		_free(pipes, NULL, args, "strjoin failed at whereis()");
-	free_ptr_arr(args);
-	args = ft_split(script, ' ');
-	if (!args)
-		_free(pipes, script, NULL, "split failed at whereis() 2");
-	execve("/usr/bin/which", args, envp);
-	_free(pipes, script, args, "Execve failed at whereis()");
+	if (arr)
+		free_ptr_arr(arr);
+	free(s1);
+	free(s2);
+	return (ret);
 }

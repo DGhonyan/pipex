@@ -39,9 +39,9 @@ int	perror_ret(char *errmsg)
 	return (-1);
 }
 
-int	check_args(char *s1, int argc)
+void	check_args(char **argv, int argc, char **envp)
 {
-	int	a;
+	char	*path;
 
 	if (argc < 5)
 	{
@@ -53,9 +53,22 @@ int	check_args(char *s1, int argc)
 		ft_printf(RED "Error: Too many arguments\n" COLOR_RESET);
 		exit(EXIT_FAILURE);
 	}
-	a = access(s1, R_OK);
-	perror_exit(a == -1, "Cannot read from a file");
-	return (0);
+	path = whereis(argv[2], envp);
+	if (!path)
+	{
+		ft_printf(RED "pipex: " "%s: Command not found\n"
+			COLOR_RESET, argv[2]);
+		exit(EXIT_FAILURE);
+	}
+	free(path);
+	path = whereis(argv[argc - 2], envp);
+	if (!path)
+	{
+		ft_printf(RED "pipex: " "%s: Command not found\n"
+			COLOR_RESET, argv[argc - 2]);
+		exit(EXIT_FAILURE);
+	}
+	free(path);
 }
 
 int	*create_pipes(int *pipes, int condition)
