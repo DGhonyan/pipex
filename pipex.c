@@ -92,29 +92,25 @@ int	child2(char *path, char **args, int *pipes, char *file)
 int	main(int argc, char **argv, char **envp)
 {
 	int		s;
-	int		*pipes;
+	int		pipes[2];
 	pid_t	pids[2];
 
 	check_args(argv[1], argc);
-	pipes = some_unrelated_func();
+	if (pipe(pipes) < 0)
+		exit(EXIT_FAILURE);
 	pids[0] = fork();
 	free_error(pipes, NULL, pids[0] < 0, "Can't fork process");
 	if (pids[0] == 0)
 		child_fork_first(pipes, envp, argv);
 	close(pipes[1]);
-	waitpid(pids[0], &s, 0);
-	if (WIFEXITED(s) && WEXITSTATUS(s) == EXIT_FAILURE)
-		free_error_child1(pipes, NULL, 1);
 	pids[1] = fork();
 	if (pids[1] == 0)
 		child_fork_last(pipes, envp, argv);
 	close(pipes[0]);
+	waitpid(pids[0], &s, 0);
 	waitpid(pids[1], &s, 0);
-	if (WIFEXITED(s) && WEXITSTATUS(s) == EXIT_FAILURE)
-		free_error_child2(pipes, NULL, 1);
-	free(pipes);
 	ft_printf(GREEN "looks like success to me\n" COLOR_RESET);
-	exit(EXIT_SUCCESS);
+	exit(WEXITSTATUS(s));
 }
 
 // while (j--)

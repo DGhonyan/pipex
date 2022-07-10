@@ -1,7 +1,11 @@
 NAME = pipex
-CC = cc -Wall -Wextra -Werror
+CC = cc 
+CFLAGS = -c #-Wall -Wextra -Werror
 SRCS = $(wildcard *.c)
 OBJS = $(SRCS:.c=.o)
+
+%.c:
+	$(CC) $(CFLAGS) $(SRCS)
 
 all: compile_printf $(NAME)
 
@@ -11,8 +15,6 @@ compile_printf:
 $(NAME): $(OBJS)
 	$(CC) $(OBJS) -lftprintf -L ft_printf -o $(NAME)
 
-$(OBJS):
-	$(CC) -c $(SRCS)
 clean:
 	rm -f *.o ft_printf/*.o
 
