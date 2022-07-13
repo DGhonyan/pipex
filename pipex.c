@@ -57,8 +57,8 @@ int	main(int argc, char **argv, char **envp)
 	int		_pipes[2];
 	pid_t	pids[2];
 
-	get_next_line_new(0);
-
+	get_next_line_new(argv[2]);
+	unlink(TMPFILE);
 	// check_args(argv, argc, envp);
 	// if (pipe(pipes) < 0)
 	// {

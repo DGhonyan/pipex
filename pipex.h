@@ -23,6 +23,8 @@
 
 # include "colors.h"
 
+# define TMPFILE "temp"
+
 typedef struct s_args {
 	int		fd1;
 	char	*file;
@@ -39,7 +41,8 @@ int		child2(t_args *args);
 int		here_doc(char *limiter);
 int		ft_strncmp(const char *s1, const char *s2, size_t n);
 int		ft_strcmp(char *s1, char *s2);
-char	*get_next_line_new(int fd);
+char	*get_next_line_new(char *limiter);
+char	*ft_strjoin(char *s1, char *s2);
 char	*whereis(char *command, char **envp);
 char	**ft_split(char const *s, char c);
 void	printf_exit(char *msg, int condition, char *s, char **command);

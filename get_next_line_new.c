@@ -21,23 +21,31 @@ static void	perror_exit_cond(char *errmsg, int cond)
 	}
 }
 
-static char	*ft_strjoin_for_read(char *s, char c)
+static char	*ft_strjoin_for_read(char *s1, char *s2)
 {
 	size_t	i;
+	size_t	j;
 	char	*res;
 
 	i = 0;
-	res = (char *)malloc(sizeof (*res) * (ft_strlen(s) + 2));
+	j = 0;
+	res = (char *)malloc(sizeof (*res)
+			* (ft_strlen(s1) + ft_strlen(s2) + 1));
 	if (!res)
 		return (NULL);
-	while (i < ft_strlen(s))
+	while (i < ft_strlen(s1))
 	{
-		res[i] = s[i];
+		res[i] = s1[i];
 		i++;
 	}
-	free(s);
-	res[i] = c;
-	res[i + 1] = '\0';
+	free(s1);
+	while (j < ft_strlen(s2))
+	{
+		res[i] = s2[j];
+		i++;
+		j++;
+	}
+	res[i] = '\0';
 	return (res);
 }
 
@@ -52,28 +60,32 @@ static void	free_stuff_and_exit(char **arr, char *s, char *errmsg)
 }
 
 ///TODO change later to return newline too
-char	*get_next_line_new(int fd)
+char	*get_next_line_new(char *limiter)
 {
 	char	*s;
-	char	c;
+	char	*limit;
+	char	c[1000000];
 	int		a;
-	int		not_a_newline;
+	int		fd;
 
-	not_a_newline = 0;
 	s = NULL;
-	c = 0;
+	limit = ft_strjoin(limiter, "\n");
+	if (!limit)
+		return (NULL);
+	fd = open(TMPFILE, O_RDWR | O_CLOEXEC | O_CREAT, 0644);
+	if (fd < 0)
+		perror_exit(1, "Can't open temp");
+	s = NULL;
 	a = 0;
 	while (1)
 	{
-		a = read(fd, &c, 1);
-		if (a == -1)
-			free_stuff_and_exit(NULL, s, "read() failed at gnl_new()");
-		if (a == 0)
-			return (s);
-		if (c == '\n')
-			continue ;
+		a = read(STDIN_FILENO, c, 10000000);
+		c[a] = '\0';
+		if (!ft_strcmp(c, limit))
+			break ;
 		s = ft_strjoin_for_read(s, c);
-		perror_exit_cond("strjoin() failed at gnl_new()", !s);
 	}
-	return (NULL);
+	write(fd, s, ft_strlen(s));
+	free(s);
+	return (s);
 }

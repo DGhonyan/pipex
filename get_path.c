@@ -13,7 +13,6 @@
 #include "pipex.h"
 
 static char	*hello(char **arr, char *s1, char *s2, char *ret);
-static char	*ft_strjoin(char *s1, char *s2);
 
 char	*whereis(char *command, char **envp)
 {
@@ -64,7 +63,7 @@ int	ft_strncmp(const char *s1, const char *s2, size_t n)
 	return (*((unsigned char *)s1) - *((unsigned char *)s2));
 }
 
-static char	*ft_strjoin(char *s1, char *s2)
+char	*ft_strjoin(char *s1, char *s2)
 {
 	size_t	i;
 	size_t	j;
