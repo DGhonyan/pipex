@@ -12,7 +12,6 @@
 
 #include "pipex.h"
 
-static int	ft_strncmp(const char *s1, const char *s2, size_t n);
 static char	*hello(char **arr, char *s1, char *s2, char *ret);
 static char	*ft_strjoin(char *s1, char *s2);
 
@@ -53,7 +52,7 @@ static char	*hello(char **arr, char *s1, char *s2, char *ret)
 	return (ret);
 }
 
-static int	ft_strncmp(const char *s1, const char *s2, size_t n)
+int	ft_strncmp(const char *s1, const char *s2, size_t n)
 {
 	if (n == 0)
 		return (0);
@@ -90,4 +89,14 @@ static char	*ft_strjoin(char *s1, char *s2)
 	}
 	res[i] = '\0';
 	return (res);
+}
+
+int	ft_strcmp(char *s1, char *s2)
+{
+	int	i;
+
+	i = 0;
+	while (s1[i] && s2[i] && s1[i] == s2[i])
+		i++;
+	return (s1[i] - s2[i]);
 }

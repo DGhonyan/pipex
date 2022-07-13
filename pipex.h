@@ -24,9 +24,10 @@
 # include "colors.h"
 
 typedef struct s_args {
+	int		fd1;
+	char	*file;
 	int		*pipes;
 	char	*path;
-	char	*file;
 	char	**args;
 	char	**envp;
 }	t_args;
@@ -35,6 +36,10 @@ int		ft_printf(const char *s, ...);
 int		perror_ret(char *errmsg);
 int		child1(t_args *args);
 int		child2(t_args *args);
+int		here_doc(char *limiter);
+int		ft_strncmp(const char *s1, const char *s2, size_t n);
+int		ft_strcmp(char *s1, char *s2);
+char	*get_next_line_new(int fd);
 char	*whereis(char *command, char **envp);
 char	**ft_split(char const *s, char c);
 void	printf_exit(char *msg, int condition, char *s, char **command);
