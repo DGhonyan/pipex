@@ -11,7 +11,6 @@
 /* ************************************************************************** */
 
 #include "pipex.h"
-#include "colors.h"
 
 size_t	ft_strlen(char *s)
 {
@@ -19,16 +18,6 @@ size_t	ft_strlen(char *s)
 
 	i = 0;
 	while (s[i])
-		i++;
-	return (i);
-}
-
-int	ptr_arr_len(char **arr)
-{
-	int	i;
-
-	i = 0;
-	while (arr[i])
 		i++;
 	return (i);
 }
@@ -42,44 +31,18 @@ int	perror_ret(char *errmsg)
 void	check_args(char **argv, int argc, char **envp)
 {
 	char	*path;
+	char	**command;
 
-	if (argc < 5)
-	{
-		ft_printf(RED "Error: Not enough arguments\n" COLOR_RESET);
-		exit(EXIT_FAILURE);
-	}
-	else if (argc > 5)
-	{
-		ft_printf(RED "Error: Too many arguments\n" COLOR_RESET);
-		exit(EXIT_FAILURE);
-	}
-	path = whereis(argv[2], envp);
-	if (!path)
-	{
-		ft_printf(RED "pipex: " "%s: Command not found\n"
-			COLOR_RESET, argv[2]);
-		exit(EXIT_FAILURE);
-	}
+	printf_exit("Not enough arguments", argc < 5, NULL, NULL);
+	printf_exit("Too many arguments", argc > 5, NULL, NULL);
+	command = ft_split(argv[2], ' ');
+	path = whereis(command[0], envp);
+	printf_exit("", !path, argv[2], command);
 	free(path);
-	path = whereis(argv[argc - 2], envp);
-	if (!path)
-	{
-		ft_printf(RED "pipex: " "%s: Command not found\n"
-			COLOR_RESET, argv[argc - 2]);
-		exit(EXIT_FAILURE);
-	}
+	free_ptr_arr(command);
+	command = ft_split(argv[argc - 2], ' ');
+	path = whereis(command[0], envp);
+	printf_exit("", !path, argv[argc - 2], command);
 	free(path);
-}
-
-int	*create_pipes(int *pipes, int condition)
-{
-	int	a;
-
-	if (condition)
-		free(pipes);
-	pipes = malloc(2 * sizeof (*pipes));
-	perror_exit(!pipes, "malloc failed at create_pipes");
-	a = pipe(pipes);
-	free_error(pipes, NULL, a == -1, "pipe failed at create_pipes");
-	return (pipes);
+	free_ptr_arr(command);
 }

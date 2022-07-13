@@ -11,53 +11,52 @@
 /* ************************************************************************** */
 
 #include "pipex.h"
-#include "colors.h"
 
-void	call_free_and_exit(char *path, t_args *args, int *pipes)
-{
-	free(pipes);
-	free(path);
-	free_struct(args);
-	exit(EXIT_FAILURE);
-}
-
-void	free_error_child1(int *pipes, char *path, int condition)
+void	free_error(int *pipes, char *path, int condition, char *errmsg)
 {
 	if (condition)
 	{
-		free(pipes);
 		free(path);
-		ft_printf(RED "command 1 failed, exit\n" COLOR_RESET);
+		if (errmsg)
+			perror(errmsg);
 		exit(EXIT_FAILURE);
 	}
 }
 
-void	free_error_child2(int *pipes, char *path, int condition)
+void	*free_ptr_arr(char **ptr)
+{
+	int	i;
+
+	i = 0;
+	if (!ptr)
+		return (NULL);
+	while (ptr[i])
+	{
+		free(ptr[i]);
+		i++;
+	}
+	free(ptr);
+	return (NULL);
+}
+
+void	perror_exit(int condition, char *errmsg)
 {
 	if (condition)
 	{
-		free(pipes);
-		free(path);
-		ft_printf(RED "command 2 failed, exit\n" COLOR_RESET);
+		perror(errmsg);
 		exit(EXIT_FAILURE);
 	}
 }
 
-int	*some_unrelated_func(void)
+void	printf_exit(char *msg, int condition, char *s, char **command)
 {
-	int	*pipes;
-
-	pipes = (int *)malloc(2 * sizeof (*pipes));
-	if (!pipes)
+	if (condition)
 	{
-		perror("malloc failed at some_unrelated_func");
+		if (s)
+			ft_printf(RED "Command not found: %s\n" RESET, s);
+		else
+			ft_printf(RED "%s\n" RESET, msg);
+		free_ptr_arr(command);
 		exit (EXIT_FAILURE);
 	}
-	if (pipe(pipes) < 0)
-	{
-		free(pipes);
-		perror("pipe failed at some_unrelated_func");
-		exit (EXIT_FAILURE);
-	}
-	return (pipes);
 }

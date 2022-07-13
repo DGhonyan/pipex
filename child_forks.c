@@ -12,67 +12,35 @@
 
 #include "pipex.h"
 
-t_args	*allocate_struct(char *split_str)
-{
-	t_args	*args;
-
-	args = (t_args *)malloc(sizeof (*args));
-	args->args = ft_split(split_str, ' ');
-	args->pipes = NULL;
-	args->pipes = create_pipes(args->pipes, 0);
-	return (args);
-}
-
 void	child_fork_first(int *pipes, char **envp, char **argv)
 {
-	int		s;
-	char	*path;
-	pid_t	pid;
-	t_args	*args;
+	t_args	args;
 
-	args = allocate_struct(argv[2]);
-	pid = fork();
-	if (pid < 0)
-	{
-		free_struct(args);
-		free_pipes_error(pipes, NULL, 1,
-			"fork failed at child_fork_first");
-	}
-	if (pid == 0)
-		whereis(argv[2], envp);
-	close(args->pipes[1]);
-	waitpid(pid, &s, 0);
-	if (WIFEXITED(s) && WEXITSTATUS(s) == EXIT_FAILURE)
-		call_free_and_exit(NULL, args, pipes);
-	path = read_from_pipe_path(args->pipes[0]);
-	child1(path, args->args, pipes, argv[1]);
-	call_free_and_exit(path, args, pipes);
+	args.args = ft_split(argv[2], ' ');
+	args.path = whereis(args.args[0], envp);
+	args.file = argv[1];
+	args.envp = envp;
+	args.pipes = pipes;
+	child1(&args);
+	free(args.path);
+	free_ptr_arr(args.args);
+	exit(EXIT_FAILURE);
 }
 
 void	child_fork_last(int *pipes, char **envp, char **argv, int argc)
 {
-	int		s;
-	char	*path;
-	pid_t	pid;
-	t_args	*args;
+	t_args	args;
 
-	args = allocate_struct(argv[ptr_arr_len(argv) - 2]);
-	pid = fork();
-	if (pid < 0)
-	{
-		free_struct(args);
-		free_pipes_error(pipes, NULL, pid < 0,
-			"fork failed at child_fork_last");
-	}
-	if (pid == 0)
-		whereis(argv[argc - 2], envp);
-	close(args->pipes[1]);
-	waitpid(pid, &s, 0);
-	if (WIFEXITED(s) && WEXITSTATUS(s) == EXIT_FAILURE)
-		call_free_and_exit(NULL, args, pipes);
-	path = read_from_pipe_path(args->pipes[0]);
-	child2(path, args->args, pipes, argv[ptr_arr_len(argv) - 1]);
-	call_free_and_exit(path, args, pipes);
+	args.args = ft_split(argv[argc - 2], ' ');
+	args.path = whereis(args.args[0], envp);
+	args.file = argv[argc - 1];
+	args.pipes = pipes;
+	args.envp = envp;
+	child2(&args);
+	free_ptr_arr(args.args);
+	free(args.path);
+	free_ptr_arr(args.args);
+	exit(EXIT_FAILURE);
 }
 
 //void	child_fork_loop(int *pipes, char **envp, char **argv, int j)
