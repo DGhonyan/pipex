@@ -23,7 +23,7 @@
 
 # include "colors.h"
 
-# define TMPFILE "temp"
+# define TMPFILE "J98hAOSDKs%$#ASDKH"
 
 typedef struct s_args {
 	int		fd1;
@@ -31,6 +31,7 @@ typedef struct s_args {
 	int		*pipes;
 	char	*path;
 	char	**args;
+	char	**argv;
 	char	**envp;
 }	t_args;
 
@@ -38,16 +39,15 @@ int		ft_printf(const char *s, ...);
 int		perror_ret(char *errmsg);
 int		child1(t_args *args);
 int		child2(t_args *args);
-int		here_doc(char *limiter);
 int		ft_strncmp(const char *s1, const char *s2, size_t n);
 int		ft_strcmp(char *s1, char *s2);
-char	*get_next_line_new(char *limiter);
+int		get_next_line_new(char *limiter);
 char	*ft_strjoin(char *s1, char *s2);
 char	*whereis(char *command, char **envp);
 char	**ft_split(char const *s, char c);
 void	printf_exit(char *msg, int condition, char *s, char **command);
 void	check_args(char **argv, int argc, char **envp);
-void	child_fork_first(int *pipes, char **envp, char **argv);
+void	child_fork_first(int *pipes, char **envp, char **argv, int fd1);
 void	child_fork_last(int *pipes, char **envp, char **argv, int argc);
 void	perror_exit(int condition, char *errmsg);
 void	free_error(int *pipes, char *path, int condition, char *errmsg);

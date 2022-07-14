@@ -12,22 +12,19 @@
 
 #include "pipex.h"
 
-void	child_fork_first(int *pipes, char **envp, char **argv)
+void	child_fork_first(int *pipes, char **envp, char **argv, int fd1)
 {
 	t_args	args;
 	int		here;
 
-	here = !ft_strcmp(argv[1], here_doc);
-	args.file = argv[1];
-	if (here)
-		args.fd1 = here_doc(argv[2]);
-	else
-		args.fd1 = open(argv[1], O_RDONLY | O_CLOEXEC);
+	here = !ft_strcmp(argv[1], "here_doc");
+	args.fd1 = fd1;
 	if (args.fd1 < 0)
 	{
 		perror ("Open failed at child1");
 		exit (EXIT_FAILURE);
 	}
+	args.argv = argv;
 	args.args = ft_split(argv[2 + here], ' ');
 	args.path = whereis(args.args[0], envp);
 	args.envp = envp;
@@ -42,6 +39,7 @@ void	child_fork_last(int *pipes, char **envp, char **argv, int argc)
 {
 	t_args	args;
 
+	args.argv = argv;
 	args.args = ft_split(argv[argc - 2], ' ');
 	args.path = whereis(args.args[0], envp);
 	args.file = argv[argc - 1];
@@ -52,11 +50,6 @@ void	child_fork_last(int *pipes, char **envp, char **argv, int argc)
 	free(args.path);
 	free_ptr_arr(args.args);
 	exit(EXIT_FAILURE);
-}
-
-int	here_doc(char *limiter)
-{
-
 }
 
 //void	child_fork_loop(int *pipes, char **envp, char **argv, int j)

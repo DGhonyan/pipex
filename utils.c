@@ -32,14 +32,18 @@ int	perror_ret(char *errmsg)
 
 void	check_args(char **argv, int argc, char **envp)
 {
+	int		here;
 	char	*path;
 	char	**command;
 
-	printf_exit("Not enough arguments", argc < 5, NULL, NULL);
-	printf_exit("Too many arguments", argc > 5, NULL, NULL);
-	command = ft_split(argv[2], ' ');
+	if (!ft_strcmp(TMPFILE, argv[argc - 1]))
+		printf_exit("Please change the filename", 1, NULL, NULL);
+	here = !ft_strcmp(argv[1], "here_doc");
+	printf_exit("Not enough arguments", argc < 5 + here, NULL, NULL);
+	printf_exit("Too many arguments", argc > 5 + here, NULL, NULL);
+	command = ft_split(argv[2 + here], ' ');
 	path = whereis(command[0], envp);
-	printf_exit("", !path, argv[2], command);
+	printf_exit("", !path, argv[2 + here], command);
 	free(path);
 	free_ptr_arr(command);
 	command = ft_split(argv[argc - 2], ' ');

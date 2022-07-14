@@ -59,8 +59,7 @@ static void	free_stuff_and_exit(char **arr, char *s, char *errmsg)
 	exit (EXIT_FAILURE);
 }
 
-///TODO change later to return newline too
-char	*get_next_line_new(char *limiter)
+int	get_next_line_new(char *limiter)
 {
 	char	*s;
 	char	*limit;
@@ -71,21 +70,20 @@ char	*get_next_line_new(char *limiter)
 	s = NULL;
 	limit = ft_strjoin(limiter, "\n");
 	if (!limit)
-		return (NULL);
-	fd = open(TMPFILE, O_RDWR | O_CLOEXEC | O_CREAT, 0644);
+		return (-1);
+	fd = open(TMPFILE, O_RDWR | O_CLOEXEC | O_TRUNC | O_CREAT, 0644);
 	if (fd < 0)
 		perror_exit(1, "Can't open temp");
-	s = NULL;
-	a = 0;
 	while (1)
 	{
-		a = read(STDIN_FILENO, c, 10000000);
+		a = read(STDIN_FILENO, c, 1000000);
 		c[a] = '\0';
 		if (!ft_strcmp(c, limit))
 			break ;
 		s = ft_strjoin_for_read(s, c);
 	}
-	write(fd, s, ft_strlen(s));
+	write(fd, s, ft_strlen(s) - 1);
 	free(s);
-	return (s);
+	free(limit);
+	return (fd);
 }
