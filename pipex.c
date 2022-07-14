@@ -18,9 +18,9 @@ int	child1(t_args *args)
 
 	if (close(args->pipes[0]) < 0)
 		return (perror_ret("close failed at child1"));
-	if (dup2(open("barev", O_RDWR | O_TRUNC), STDOUT_FILENO) < 0)
+	if (dup2(args->pipes[1], STDOUT_FILENO) < 0)
 		return (perror_ret("dup2 failed at child1"));
-	if (dup2(open(TMPFILE, O_RDWR), STDIN_FILENO) < 0)
+	if (dup2(args->fd1, STDIN_FILENO) < 0)
 		return (perror_ret("dup2 failed at child1 again"));
 	if (close(args->pipes[1]) < 0)
 		return (perror_ret("close failed at child1 again"));
@@ -34,7 +34,7 @@ int	child2(t_args *args)
 
 	if (close(args->pipes[1]) < 0)
 		return (perror_ret("close failed at child2"));
-	if (!ft_strcmp(args->argv[0], "here_doc"))
+	if (!ft_strcmp(args->argv[1], "here_doc"))
 		fd = open(args->file, O_WRONLY | O_CLOEXEC
 			| O_CREAT | O_APPEND, 0644);
 	else
@@ -72,20 +72,15 @@ int	main(int argc, char **argv, char **envp)
 	free_error(pipes, NULL, pids[0] < 0, "Can't fork process");
 	if (pids[0] == 0)
 		child_fork_first(pipes, envp, argv, here_fd);
-	// pids[1] = fork();
-	// if (pids[1] == 0)
-	// 	child_fork_last(pipes, envp, argv, argc);
-	// close(pipes[0]);
+	pids[1] = fork();
+	if (pids[1] == 0)
+		child_fork_last(pipes, envp, argv, argc);
+	close(pipes[0]);
 	close(pipes[1]);
 	waitpid(pids[0], &s, 0);
-	close(here_fd);
+	waitpid(pids[1], &s, 0);
 	unlink(TMPFILE);
-	// waitpid(pids[1], &s, 0);
-	// if (!ft_strcmp(argv[1], "here_doc"))
-	// {
-	// 	// close(here_fd);
-	// }
-	// exit(WEXITSTATUS(s));
+	exit(WEXITSTATUS(s));
 }
 
 // while (j--)

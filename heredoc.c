@@ -85,5 +85,6 @@ int	get_next_line_new(char *limiter)
 	write(fd, s, ft_strlen(s) - 1);
 	free(s);
 	free(limit);
-	return (fd);
+	close (fd);
+	return (open (TMPFILE, O_RDWR));
 }
