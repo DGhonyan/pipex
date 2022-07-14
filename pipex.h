@@ -23,7 +23,7 @@
 
 # include "colors.h"
 
-# define TMPFILE "J98hAOSDKs%$#ASDKH"
+# define TMPFILE "J98hAOSDKs%s$#ASDKHspleasedontcreatefileswiththisname"
 
 typedef struct s_args {
 	int		fd1;

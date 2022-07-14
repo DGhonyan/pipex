@@ -72,8 +72,7 @@ int	get_next_line_new(char *limiter)
 	if (!limit)
 		return (-1);
 	fd = open(TMPFILE, O_RDWR | O_CLOEXEC | O_TRUNC | O_CREAT, 0644);
-	if (fd < 0)
-		perror_exit(1, "Can't open temp");
+	perror_exit(fd < 0, "Can't open temp");
 	while (1)
 	{
 		a = read(STDIN_FILENO, c, 1000000);

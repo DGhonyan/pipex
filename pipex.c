@@ -36,7 +36,7 @@ int	child2(t_args *args)
 		return (perror_ret("close failed at child2"));
 	if (!ft_strcmp(args->argv[1], "here_doc"))
 		fd = open(args->file, O_WRONLY | O_CLOEXEC
-			| O_CREAT | O_APPEND, 0644);
+				| O_CREAT | O_APPEND, 0644);
 	else
 		fd = open(args->file, O_WRONLY | O_CLOEXEC | O_TRUNC | O_CREAT, 0644);
 	if (fd < 0)
@@ -51,6 +51,15 @@ int	child2(t_args *args)
 	return (perror_ret("Execve failed at child2"));
 }
 
+void	cleanup(int *pipes, pid_t *pids, int *s)
+{
+	close(pipes[0]);
+	close(pipes[1]);
+	waitpid(pids[0], s, 0);
+	unlink(TMPFILE);
+	waitpid(pids[1], s, 0);
+}
+
 int	main(int argc, char **argv, char **envp)
 {
 	int		s;
@@ -58,9 +67,10 @@ int	main(int argc, char **argv, char **envp)
 	int		pipes[2];
 	pid_t	pids[2];
 
+	unlink(TMPFILE);
 	check_args(argv, argc, envp);
 	if (!ft_strcmp(argv[1], "here_doc"))
-		here_fd = get_next_line_new(argv[2]);	
+		here_fd = get_next_line_new(argv[2]);
 	else
 		here_fd = open(argv[1], O_RDONLY | O_CLOEXEC);
 	if (pipe(pipes) < 0)
@@ -75,11 +85,7 @@ int	main(int argc, char **argv, char **envp)
 	pids[1] = fork();
 	if (pids[1] == 0)
 		child_fork_last(pipes, envp, argv, argc);
-	close(pipes[0]);
-	close(pipes[1]);
-	waitpid(pids[0], &s, 0);
-	waitpid(pids[1], &s, 0);
-	unlink(TMPFILE);
+	cleanup(pipes, pids, &s);
 	exit(WEXITSTATUS(s));
 }
 
