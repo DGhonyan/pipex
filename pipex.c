@@ -60,24 +60,44 @@ void	cleanup(int *pipes, pid_t *pids, int *s)
 	waitpid(pids[1], s, 0);
 }
 
+void	call_forks(int argc, char **argv, pid_t pids, char **envp)
+{
+	int	i;
+	int	j;
+
+	i = 1 + !(ft_strcmp(argv[1], "here_doc"));
+	j = argc - 2;// + !(ft_strcmp(argv[1], "here_doc"));
+	while (i < argc - 2)
+	{
+		if (i == 1 + !(ft_strcmp(argv[1], "here_doc")))
+		{
+			pids[0] = fork();
+			free_error(pipes, NULL, pids[0] < 0, "Can't fork process");
+			if (pids[0] == 0)
+				child_fork_first(pipes, envp, argv, here_fd);
+		}
+	}
+}
+
 int	main(int argc, char **argv, char **envp)
 {
 	int		s;
+	t_args	args;
 	int		here_fd;
 	int		pipes[2];
 	pid_t	pids[2];
 
+	args.argv = argv;
+	args.argc = argc;
+	args.envp = envp;
 	unlink(TMPFILE);
 	check_args(argv, argc, envp);
 	if (!ft_strcmp(argv[1], "here_doc"))
 		here_fd = get_next_line_new(argv[2]);
 	else
 		here_fd = open(argv[1], O_RDONLY | O_CLOEXEC);
-	if (pipe(pipes) < 0)
-	{
-		perror("pipe() failed");
-		exit(EXIT_FAILURE);
-	}
+	s = pipe(pipes);
+	perror_exit(s < 0, "pipe() failed");
 	pids[0] = fork();
 	free_error(pipes, NULL, pids[0] < 0, "Can't fork process");
 	if (pids[0] == 0)
